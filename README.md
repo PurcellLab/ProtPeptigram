@@ -1,8 +1,11 @@
 # ProtPeptigram
 
-![Python Package](https://github.com/Sanpme66/ProtPeptigram/actions/workflows/python-package.yml/badge.svg)
-[![PyPI version](https://badge.fury.io/py/protpeptigram.svg)](https://badge.fury.io/py/protpeptigram)
+[![CI/CD](https://github.com/Sanpme66/ProtPeptigram/actions/workflows/python-package.yml/badge.svg)](https://github.com/Sanpme66/ProtPeptigram/actions/workflows/python-package.yml)
+[![Cross-Platform](https://github.com/Sanpme66/ProtPeptigram/actions/workflows/cross-platform-metrics.yml/badge.svg)](https://github.com/Sanpme66/ProtPeptigram/actions/workflows/cross-platform-metrics.yml)
+[![PyPI version](https://badge.fury.io/py/protpeptigram.svg)](https://pypi.org/project/protpeptigram/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Downloads](https://static.pepy.tech/badge/protpeptigram)](https://pepy.tech/project/protpeptigram)
 
 ## Visualization of Immunopeptides Mapped to Source Proteins Across Multiple Samples
 
