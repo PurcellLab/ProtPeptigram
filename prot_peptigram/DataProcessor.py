@@ -1,3 +1,4 @@
+from prot_peptigram.logger import CONSOLE as console
 import pandas as pd
 import numpy as np
 import re
@@ -74,7 +75,7 @@ class PeptideDataProcessor:
         """
         try:
             self.peaks_data = pd.read_csv(file_path)
-            print(f"Loaded {len(self.peaks_data)} peptide entries from {file_path}")
+            console.log(f"Loaded {len(self.peaks_data)} peptide entries from {file_path}", style="bold green")
             
             # Check required columns
             required_cols = ['Peptide', 'Accession']
@@ -87,14 +88,14 @@ class PeptideDataProcessor:
             self.intensity_cols = [col for col in self.peaks_data.columns if col.startswith(self.sample_prefix)]
             
             if not self.intensity_cols:
-                print(f"Warning: No columns with prefix '{self.sample_prefix}' found.")
+                console.log(f"Warning: No columns with prefix '{self.sample_prefix}' found.", style="bold yellow")
             else:
-                print(f"Found {len(self.intensity_cols)} intensity columns: {', '.join(self.intensity_cols)}")
+                console.log(f"Found {len(self.intensity_cols)} intensity columns: {', '.join(self.intensity_cols)}", style="bold green")
                 
             return self.peaks_data
             
         except Exception as e:
-            print(f"Error loading PEAKS data: {str(e)}")
+            console.log(f"Error loading PEAKS data: {str(e)}", style="bold red")
             raise
     
     def load_protein_sequences(self, fasta_path: str) -> Dict[str, str]:
@@ -121,11 +122,11 @@ class PeptideDataProcessor:
                 # Also store with description for more flexible matching
                 self.protein_sequences[record.description] = str(record.seq)
             
-            print(f"Loaded {len(self.protein_sequences)} protein sequences from {fasta_path}")
+            console.log(f"Loaded {len(self.protein_sequences)} protein sequences from {fasta_path}", style="bold green")
             return self.protein_sequences
             
         except Exception as e:
-            print(f"Error loading protein sequences: {str(e)}")
+            console.log(f"Error loading protein sequences: {str(e)}", style="bold red")
             raise
     
     def is_contaminant(self, accession: str) -> bool:
@@ -262,7 +263,7 @@ class PeptideDataProcessor:
         if filter_contaminants:
             initial_count = len(data)
             data = data[~data['Accession'].apply(self.is_contaminant)]
-            print(f"Removed {initial_count - len(data)} contaminant entries")
+            console.log(f"Removed {initial_count - len(data)} contaminant entries", style="bold green")
         
         # Filter by intensity threshold and minimum samples
         if intensity_threshold > 0 or min_samples > 1:
@@ -270,7 +271,7 @@ class PeptideDataProcessor:
             detection_counts = (data[self.intensity_cols] > intensity_threshold).sum(axis=1)
             initial_count = len(data)
             data = data[detection_counts >= min_samples]
-            print(f"Removed {initial_count - len(data)} entries below intensity threshold or minimum sample count")
+            console.log(f"Removed {initial_count - len(data)} entries below intensity threshold or minimum sample count", style="bold green")
         
         # Prepare the formatted data for ImmunoViz
         formatted_rows = []
@@ -324,8 +325,8 @@ class PeptideDataProcessor:
         # Create the formatted DataFrame
         self.peptide_df = pd.DataFrame(formatted_rows)
         
-        print(f"Created formatted data with {len(self.peptide_df)} peptide-protein-sample combinations")
-        print(f"PTMs were removed for position finding. Original peptides preserved in 'Peptide' column, clean versions in 'CleanPeptide' column.")
+        console.log(f"Created formatted data with {len(self.peptide_df)} peptide-protein-sample combinations", style="bold green")
+        console.log(f"PTMs were removed for position finding. Original peptides preserved in 'Peptide' column, clean versions in 'CleanPeptide' column.", style="bold yellow")
         
         return self.peptide_df
     
@@ -367,12 +368,12 @@ class PeptideDataProcessor:
         # Import ImmunoViz here to avoid circular imports
         try:
             # Assuming ImmunoViz is defined elsewhere or imported
-            from peptigram.viz import ImmunoViz
+            from prot_peptigram.viz import ImmunoViz
             # Use a dataframe with just the columns ImmunoViz expects
             immunoviz_df = self.peptide_df[['Peptide', 'Protein', 'Start', 'End', 'Intensity', 'Sample', 'Length']].copy()
             return ImmunoViz(immunoviz_df)
         except ImportError:
-            print("Warning: ImmunoViz class not found. Make sure it's properly imported.")
+            console.log("Warning: ImmunoViz class not found. Make sure it's properly imported.", style="bold yellow")
             return None
     
     def get_unique_proteins(self) -> List[str]:
@@ -414,17 +415,17 @@ class PeptideDataProcessor:
             raise ValueError("Data not formatted. Call filter_and_format_data() first.")
             
         self.peptide_df.to_csv(output_file, index=False)
-        print(f"Saved formatted data to {output_file}")
+        console.log(f"Saved formatted data to {output_file}", style="bold green")
 
 
 # Example of how to use the updated class
-if __name__ == "__main__":
-    # Test the PTM removal function
-    processor = PeptideDataProcessor()
-    test_peptide = "IVS(+15.99)Y(+15.99)YDDIANSEENPTPG"
-    clean_peptide = processor.remove_ptm(test_peptide)
-    print(f"Original peptide: {test_peptide}")
-    print(f"Clean peptide: {clean_peptide}")
+# if __name__ == "__main__":
+#     # Test the PTM removal function
+#     processor = PeptideDataProcessor()
+#     test_peptide = "IVS(+15.99)Y(+15.99)YDDIANSEENPTPG"
+#     clean_peptide = processor.remove_ptm(test_peptide)
+#     console.print(f"Original peptide: {test_peptide}")
+#     print(f"Clean peptide: {clean_peptide}")
     
     # Full example would need real data files
     # processor = PeptideDataProcessor("my_peaks_data.csv", "protein_sequences.fasta")

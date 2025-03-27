@@ -5,6 +5,7 @@ import matplotlib.patheffects as path_effects
 from typing import List, Dict, Union, Tuple, Optional
 import os
 
+
 class ImmunoViz:
     """
     A visualization tool for immunopeptide data from mass spectrometry results.
@@ -116,6 +117,7 @@ class ImmunoViz:
         dpi : int, optional
             DPI for the figure (default: 100)
         """
+
         # Convert single protein ID to list
         if isinstance(protein_ids, str):
             protein_ids = [protein_ids]

@@ -156,7 +156,7 @@ def run_pipeline(
     unique_proteins = processor.get_unique_proteins()
     unique_samples = processor.get_unique_samples()
     
-    console.log(f"Number of unique proteins: {len(unique_proteins)}", style="bold")
+    console.log(f"Number of unique proteins: {len(unique_proteins)}", style="bold green")
     console.log(f"Unique samples: {unique_samples}", style="bold")
     # print(f"Unique samples: {unique_samples}")
     

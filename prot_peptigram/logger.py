@@ -3,7 +3,7 @@ from rich.logging import RichHandler
 from rich.console import Console
 from rich.table import Table
 import click
-
+import os
 
 
 # Console for Rich library
@@ -56,13 +56,13 @@ def configure_logging(level: str = "info", log_to_file: bool = False) -> logging
     return logger
 
 
-def save_console_log(file_name: str = "cluster_search.log"):
+def save_console_log(output_dir,file_name: str = "prot-peptigram.log"):
     """
     Saves console logs to a specified file.
 
     Args:
         file_name (str): The filename to save the log. Defaults to "cluster_search.log".
     """
-    with open(file_name, "w") as log_file:
+    with open(os.path.join(output_dir,file_name), "w") as log_file:
         log_file.write(CONSOLE.export_text())
 

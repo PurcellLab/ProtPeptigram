@@ -5,6 +5,7 @@ from prot_peptigram.DataProcessor import PeptideDataProcessor
 from prot_peptigram.viz import ImmunoViz
 install(show_locals=True)  # type: ignore
 
+filterwarnings("ignore")
 """
 Peptigram: peptides distribution across proteins
 
