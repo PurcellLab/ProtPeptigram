@@ -1,5 +1,6 @@
 from prot_peptigram.DataProcessor import PeptideDataProcessor
 from prot_peptigram.viz import ImmunoViz
+from prot_peptigram.logger import CONSOLE as console
 import os
 import matplotlib.pyplot as plt
 from pathlib import Path
@@ -39,10 +40,12 @@ def select_abundant_proteins(processor, top_n=5, min_peptides=3):
     # Get the top N proteins
     selected_proteins = abundant_proteins.head(top_n)['Protein'].tolist()
     
-    print(f"Selected {len(selected_proteins)} proteins with highest peptide counts:")
+    # print(f"Selected {len(selected_proteins)} proteins with highest peptide counts:")
+    console.log(f"Selected {len(selected_proteins)} proteins with highest peptide counts:", style="bold")
     for protein, count in zip(selected_proteins, 
                             abundant_proteins.head(top_n)['PeptideCount']):
-        print(f"  {protein}: {count} peptides")
+        console.log(f"  {protein}: {count} peptides", style="bold")
+        
     
     return selected_proteins
 
@@ -131,7 +134,7 @@ def run_pipeline(
     specific_proteins = None
     if protein_list and os.path.exists(protein_list):
         specific_proteins = read_protein_list(protein_list)
-        print(f"Using {len(specific_proteins)} proteins from provided list.")
+        console.print(f"Using {len(specific_proteins)} proteins from provided list.", style="bold")
     
     # 1. Initialize the data processor
     processor = PeptideDataProcessor()
@@ -153,8 +156,9 @@ def run_pipeline(
     unique_proteins = processor.get_unique_proteins()
     unique_samples = processor.get_unique_samples()
     
-    print(f"Number of unique proteins: {len(unique_proteins)}")
-    print(f"Unique samples: {unique_samples}")
+    console.log(f"Number of unique proteins: {len(unique_proteins)}", style="bold")
+    console.log(f"Unique samples: {unique_samples}", style="bold")
+    # print(f"Unique samples: {unique_samples}")
     
     # 6. Create ImmunoViz object
     viz = ImmunoViz(immunoviz_df)
@@ -164,7 +168,7 @@ def run_pipeline(
         # Filter to ensure proteins exist in the data
         proteins_to_visualize = [p for p in specific_proteins if p in unique_proteins]
         if len(proteins_to_visualize) == 0:
-            print("Warning: None of the specified proteins were found in the data.")
+            console.print("Warning: None of the specified proteins were found in the data.")
             # Fall back to top proteins if specified proteins not found
             proteins_to_visualize = select_abundant_proteins(processor, top_n=top, min_peptides=3)
     else:
@@ -196,13 +200,13 @@ def run_pipeline(
             fig.savefig(output_file, dpi=300, bbox_inches='tight')
             plt.close(fig)
             output_files.append(output_file)
-            print(f"PeptiGram for {prot} saved to {output_file}")
+            console.log(f"PeptiGram for {prot} saved to {output_file}", style="bold")
         except Exception as e:
             print(f"Error generating visualization for protein {prot}: {str(e)}")
     
     # Also save a CSV with the processed data
     output_csv = os.path.join(output_dir, "processed_peptides_prot-peptigram.csv")
     immunoviz_df.to_csv(output_csv, index=False)
-    print(f"Processed peptide data saved to {output_csv}")
+    console.log(f"Processed peptide data saved to {output_csv}", style="bold")
     
     return processor, viz, output_files
