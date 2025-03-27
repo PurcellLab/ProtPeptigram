@@ -5,9 +5,9 @@ import sys
 from multiprocessing import Pool
 from rich.text import Text
 from rich_argparse import RichHelpFormatter
-from prot_peptigram.logger import CONSOLE
-from prot_peptigram import __author__, __version__
-from prot_peptigram.runner import run_pipeline
+from ProtPeptigram.logger import CONSOLE
+from ProtPeptigram import __author__, __version__
+from ProtPeptigram.runner import run_pipeline
 
 
 def _welcome():

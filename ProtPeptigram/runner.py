@@ -1,6 +1,6 @@
-from prot_peptigram.DataProcessor import PeptideDataProcessor
-from prot_peptigram.viz import ImmunoViz
-from prot_peptigram.logger import CONSOLE as console
+from ProtPeptigram.DataProcessor import PeptideDataProcessor
+from ProtPeptigram.viz import ImmunoViz
+from ProtPeptigram.logger import CONSOLE as console
 import os
 import matplotlib.pyplot as plt
 from pathlib import Path

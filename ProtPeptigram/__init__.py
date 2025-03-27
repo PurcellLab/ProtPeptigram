@@ -1,8 +1,8 @@
 # This file is part of the HLA-PEPCLUST software package.
 from warnings import filterwarnings
 from rich.traceback import install
-from prot_peptigram.DataProcessor import PeptideDataProcessor
-from prot_peptigram.viz import ImmunoViz
+from ProtPeptigram.DataProcessor import PeptideDataProcessor
+from ProtPeptigram.viz import ImmunoViz
 install(show_locals=True)  # type: ignore
 
 filterwarnings("ignore")
