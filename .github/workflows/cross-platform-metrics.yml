@@ -69,7 +69,7 @@ jobs:
         # Create a simple benchmark script if it doesn't exist
         if [ ! -f "benchmarks/run_benchmarks.py" ]; then
           mkdir -p benchmarks
-          echo '
+          cat > benchmarks/run_benchmarks.py << 'EOL'
 import time
 import sys
 from ProtPeptigram.DataProcessor import PeptideDataProcessor
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     # Return summary for GitHub Actions
     print(f"::set-output name=creation_time::{results['creation_time']:.4f}")
     print(f"::set-output name=plot_time::{results['plot_time']:.4f}")
-' > benchmarks/run_benchmarks.py
+EOL
         fi
         
         # Run benchmarks
@@ -123,7 +123,7 @@ if __name__ == "__main__":
         # Create a simple memory profiling script if it doesn't exist
         if [ ! -f "benchmarks/memory_profile.py" ]; then
           mkdir -p benchmarks
-          echo '
+          cat > benchmarks/memory_profile.py << 'EOL'
 import sys
 import pandas as pd
 import numpy as np
@@ -183,7 +183,7 @@ if __name__ == "__main__":
     print(f"::set-output name=data_memory::{results['data_memory']:.2f}")
     print(f"::set-output name=viz_memory::{results['viz_memory']:.2f}")
     print(f"::set-output name=plot_memory::{results['plot_memory']:.2f}")
-' > benchmarks/memory_profile.py
+EOL
         fi
         
         # Run memory profiling
