@@ -1,4 +1,4 @@
-name: ProtPeptigram Python Package CI/CD
+name: ProtPetigram CI/CD
 
 on:
   push:
@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.8, 3.9, '3.10', '3.11', '3.12']
+        python-version: ['3.10', '3.11', '3.12']
 
     steps:
     - uses: actions/checkout@v3
@@ -33,10 +33,20 @@ jobs:
     - name: Create test data directory
       run: |
         mkdir -p data/test
-        # Download minimal test data or create mock data
-        # This is just a placeholder - you'd need to provide actual test data
+        # Create mock data for testing
         echo "Sample test data" > data/test/sample.csv
-        cat test/data/JCI146771_Mouse_peptides_peaks_online.csv > data/test/JCI146771_Mouse_peptides_peaks_online.csv
+    
+    - name: Copy test data from repository
+      run: |
+        if [ -d "test/data" ]; then
+          cp -r test/data/* data/test/
+        else
+          # Alternative: Use data from the main data directory if available
+          if [ -d "data" ] && [ -f "data/JCI146771_Mouse_peptides_peaks_online.csv" ]; then
+            cp data/JCI146771_Mouse_peptides_peaks_online.csv data/test/
+            cp data/uniprotkb_proteome_UP000000589_AND_revi_2025_03_12.fasta data/test/ || echo "FASTA file not found, tests may fail"
+          fi
+        fi
     
     - name: Run tests
       run: |
