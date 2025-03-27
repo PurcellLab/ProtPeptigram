@@ -1,23 +1,27 @@
-name: ProtPeptigram CI/CD
+name: Cross-Platform Metrics
 
 on:
   push:
     branches: [ main ]
-    tags:
-      - 'v*'
   pull_request:
     branches: [ main ]
+  schedule:
+    # Run weekly on Sunday at 00:00 UTC
+    - cron: '0 0 * * 0'
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  metrics:
+    name: ${{ matrix.os }} / Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ['3.10', '3.11', '3.12']
-
+    
     steps:
     - uses: actions/checkout@v3
+    
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -26,66 +30,193 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install pytest matplotlib pandas numpy biopython rich rich-argparse
+        python -m pip install pytest pytest-cov matplotlib pandas numpy biopython rich rich-argparse
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         pip install -e .
+      shell: bash
     
     - name: Create test data directory
       run: |
         mkdir -p data/test
-        # Create mock data for testing
         echo "Sample test data" > data/test/sample.csv
+      shell: bash
     
     - name: Copy test data from repository
       run: |
         if [ -d "test/data" ]; then
           cp -r test/data/* data/test/
-        else
-          # Alternative: Use data from the main data directory if available
-          if [ -d "data" ] && [ -f "data/JCI146771_Mouse_peptides_peaks_online.csv" ]; then
-            cp data/JCI146771_Mouse_peptides_peaks_online.csv data/test/
-            cp data/uniprotkb_proteome_UP000000589_AND_revi_2025_03_12.fasta data/test/ || echo "FASTA file not found, tests may fail"
-          fi
+        elif [ -d "data" ] && [ -f "data/JCI146771_Mouse_peptides_peaks_online.csv" ]; then
+          cp data/JCI146771_Mouse_peptides_peaks_online.csv data/test/
+          cp data/uniprotkb_proteome_UP000000589_AND_revi_2025_03_12.fasta data/test/ || echo "FASTA file not found, tests may fail"
         fi
+      shell: bash
     
-    - name: Run tests
+    - name: Run tests with coverage
       run: |
-        pytest -xvs
-
-  build-n-publish:
-    name: Build and publish Python distributions to PyPI
-    needs: test
-    runs-on: ubuntu-latest
-    # Only run this job if we're pushing a tag that starts with 'v'
-    if: startsWith(github.ref, 'refs/tags/v')
-    permissions:
-      id-token: write  # Required for trusted publishing
-      contents: read
+        pytest --cov=ProtPeptigram --cov-report=xml
+      shell: bash
     
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-${{ matrix.os }}-py${{ matrix.python-version }}
+        fail_ci_if_error: false
+    
+    - name: Performance benchmarks
+      run: |
+        # Create a simple benchmark script if it doesn't exist
+        if [ ! -f "benchmarks/run_benchmarks.py" ]; then
+          mkdir -p benchmarks
+          cat > benchmarks/run_benchmarks.py << 'EOL'
+import time
+import sys
+from ProtPeptigram.DataProcessor import PeptideDataProcessor
+from ProtPeptigram.viz import ImmunoViz
+import pandas as pd
+import numpy as np
+
+def benchmark_basic_processing():
+    # Create sample data
+    test_data = pd.DataFrame({
+        "Peptide": ["AAAPEPTIDE", "BBPEPTIDE", "CCPEPTIDE"] * 100,
+        "Protein": ["P12345", "P12345", "P67890"] * 100,
+        "Start": [10, 30, 50] * 100,
+        "End": [20, 40, 60] * 100,
+        "Sample": ["Sample1", "Sample2", "Sample1"] * 100,
+        "Intensity": [1000, 2000, 3000] * 100
+    })
+    
+    # Measure time to create viz
+    start = time.time()
+    viz = ImmunoViz(test_data)
+    creation_time = time.time() - start
+    
+    # Measure time to plot
+    start = time.time()
+    fig, _ = viz.plot_peptigram("P12345")
+    plot_time = time.time() - start
+    
+    return {
+        "creation_time": creation_time,
+        "plot_time": plot_time
+    }
+
+if __name__ == "__main__":
+    results = benchmark_basic_processing()
+    print(f"Creation time: {results['creation_time']:.4f}s")
+    print(f"Plot time: {results['plot_time']:.4f}s")
+    
+    # Return summary for GitHub Actions
+    print(f"::set-output name=creation_time::{results['creation_time']:.4f}")
+    print(f"::set-output name=plot_time::{results['plot_time']:.4f}")
+EOL
+        fi
+        
+        # Run benchmarks
+        python benchmarks/run_benchmarks.py
+      shell: bash
+    
+    - name: Memory usage analysis
+      run: |
+        # Create a simple memory profiling script if it doesn't exist
+        if [ ! -f "benchmarks/memory_profile.py" ]; then
+          mkdir -p benchmarks
+          cat > benchmarks/memory_profile.py << 'EOL'
+import sys
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from ProtPeptigram.DataProcessor import PeptideDataProcessor
+from ProtPeptigram.viz import ImmunoViz
+import tracemalloc
+
+def memory_profile():
+    # Start tracking memory
+    tracemalloc.start()
+    
+    # Create sample data
+    test_data = pd.DataFrame({
+        "Peptide": ["AAAPEPTIDE", "BBPEPTIDE", "CCPEPTIDE"] * 100,
+        "Protein": ["P12345", "P12345", "P67890"] * 100,
+        "Start": [10, 30, 50] * 100,
+        "End": [20, 40, 60] * 100,
+        "Sample": ["Sample1", "Sample2", "Sample1"] * 100,
+        "Intensity": [1000, 2000, 3000] * 100
+    })
+    
+    # Measure memory after data creation
+    data_snapshot = tracemalloc.take_snapshot()
+    
+    # Create visualization
+    viz = ImmunoViz(test_data)
+    viz_snapshot = tracemalloc.take_snapshot()
+    
+    # Plot
+    fig, _ = viz.plot_peptigram("P12345")
+    plot_snapshot = tracemalloc.take_snapshot()
+    
+    # Analyze memory usage
+    data_stats = data_snapshot.statistics("lineno")
+    viz_stats = viz_snapshot.statistics("lineno")
+    plot_stats = plot_snapshot.statistics("lineno")
+    
+    # Get total memory usage
+    total_data = sum(stat.size for stat in data_stats)
+    total_viz = sum(stat.size for stat in viz_stats) - total_data
+    total_plot = sum(stat.size for stat in plot_stats) - total_viz - total_data
+    
+    return {
+        "data_memory": total_data / 1024,  # KB
+        "viz_memory": total_viz / 1024,    # KB
+        "plot_memory": total_plot / 1024   # KB
+    }
+
+if __name__ == "__main__":
+    results = memory_profile()
+    print(f"Data memory: {results['data_memory']:.2f} KB")
+    print(f"Visualization object memory: {results['viz_memory']:.2f} KB")
+    print(f"Plot creation memory: {results['plot_memory']:.2f} KB")
+    
+    # Return summary for GitHub Actions
+    print(f"::set-output name=data_memory::{results['data_memory']:.2f}")
+    print(f"::set-output name=viz_memory::{results['viz_memory']:.2f}")
+    print(f"::set-output name=plot_memory::{results['plot_memory']:.2f}")
+EOL
+        fi
+        
+        # Run memory profiling
+        python benchmarks/memory_profile.py
+      shell: bash
+  
+  metrics-summary:
+    name: Generate metrics summary
+    needs: metrics
+    runs-on: ubuntu-latest
+    if: always()
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
     
-    - name: Install dependencies
+    - name: Create metrics summary
       run: |
-        python -m pip install --upgrade pip
-        pip install build twine
+        echo "# ProtPeptigram Cross-Platform Metrics" > metrics-summary.md
+        echo "" >> metrics-summary.md
+        echo "## Test Results" >> metrics-summary.md
+        echo "" >> metrics-summary.md
+        echo "| OS | Python Version | Status |" >> metrics-summary.md
+        echo "|----|--------------------|--------|" >> metrics-summary.md
+        
+        # For a real implementation, you would capture the actual test results
+        # from the previous job outputs and add them here
+        
+        echo "This summary would normally include performance metrics, memory usage analysis, and test results across all operating systems and Python versions." >> metrics-summary.md
+        
+        cat metrics-summary.md
+      shell: bash
     
-    - name: Build package
-      run: python -m build
-    
-    - name: Publish package to TestPyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
+    - name: Upload metrics summary
+      uses: actions/upload-artifact@v3
       with:
-        repository-url: https://test.pypi.org/legacy/
-        skip_existing: true
-        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-    
-    - name: Publish package to PyPI
-      if: startsWith(github.ref, 'refs/tags/v')
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        password: ${{ secrets.PYPI_API_TOKEN }}
+        name: metrics-summary
+        path: metrics-summary.md
