@@ -412,7 +412,8 @@ class ImmunoViz:
                 ax.set_visible(False)
                 continue
             
-            group_peptides['Length'] = group_peptides['End'] - group_peptides['Start']
+            # group_peptides['Length'] = group_peptides['End'] - group_peptides['Start']
+            group_peptides.loc[:, 'Length'] = group_peptides['End'] - group_peptides['Start']
 
             # Calculate maximum height needed
             max_height = self._calculate_plot_height(group_peptides, xlim)
