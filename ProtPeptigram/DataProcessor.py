@@ -42,7 +42,7 @@ class PeptideDataProcessor:
         # Set default contaminant keywords if not provided
         if contaminant_keywords is None:
             self.contaminant_keywords = [
-                "CONTAM", "CONT_", "REV_", "iRT", "REVERSE" #,"DECOY", "sp|", "tr|", "keratin", "KRT"
+                "CONTAM", "CONT_", "REV_", "iRT", "REVERSE" ,"DECOY" #, "sp|", "tr|", "keratin", "KRT"
                 
             ]
         else:
