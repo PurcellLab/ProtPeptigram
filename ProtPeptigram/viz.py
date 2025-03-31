@@ -62,7 +62,7 @@ class ImmunoViz:
         external_legend: bool = True,
         highlight_alpha: float = 0.25,
         highlight_color: str = "#FF8888",
-        dpi: int = 100
+        dpi: int = 300
     ):
         """
         Create a PeptiGram visualization with protein-based coloring.
