@@ -8,8 +8,8 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # Project information
 project = 'ProtPeptigram'
-copyright = f'{datetime.now().year}, Sanjay SG Krishna'
-author = 'Sanjay SG Krishna'
+copyright = f'{datetime.now().year}, Sanjay Krishna'
+author = 'Sanjay Krishna'
 
 # The version info for the project
 version = '0.1'
