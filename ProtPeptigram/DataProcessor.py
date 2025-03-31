@@ -193,7 +193,7 @@ class PeptideDataProcessor:
             return []
             
         # Split by common delimiters
-        protein_ids = re.split(r'[,;|/\s]+', accession_value)
+        protein_ids = re.split(r'[,:;|/\s]+', accession_value)
         
         # Remove empty entries and trim whitespace
         protein_ids = [pid.strip() for pid in protein_ids if pid.strip()]
