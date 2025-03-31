@@ -260,7 +260,7 @@ class PeptideDataProcessor:
         data = self.peaks_data.copy()
         
         # Capitalize the first letter of all column names
-        data.columns = [col.capitalize() for col in data.columns]
+        #data.columns = [col.capitalize() for col in data.columns]
         
         # Filter out contaminants
         if filter_contaminants:

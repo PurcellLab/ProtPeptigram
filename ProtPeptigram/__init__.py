@@ -1,4 +1,8 @@
-# This file is part of the HLA-PEPCLUST software package.
+#bin/python
+# -*- coding: utf-8 -*-
+"""
+Created on 2023-10-02 16:00:00
+"""
 from warnings import filterwarnings
 from rich.traceback import install
 from ProtPeptigram.DataProcessor import PeptideDataProcessor
