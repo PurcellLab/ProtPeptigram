@@ -16,6 +16,6 @@ Peptigram: peptides distribution across proteins
 A Python package for mapping peptides to source protein and identifying high desnsity window to core prptides across diffrent source protein
 """
 
-__version__ = "1.0.0-dev"
+__version__ = "1.0.1-dev"
 __author__ = "Sanjay Krishna,Prithvi Munday,Chen Li"
 __email__ = "sanjay.sondekoppagopalakrishna@monash.edu"

@@ -11,11 +11,11 @@ class ImmunoViz:
     A visualization tool for immunopeptide data from mass spectrometry results.
     Enhanced version with sequential colormaps and advanced visualization options.
     """
-    
+
     def __init__(self, peptide_data: pd.DataFrame):
         """
         Initialize the ImmunoViz object with peptide data.
-        
+
         Parameters:
         -----------
         peptide_data : pd.DataFrame
@@ -28,17 +28,17 @@ class ImmunoViz:
             - Sample: sample identifier
         """
         self.peptide_data = peptide_data.copy()
-        
+
         # Set default visualization parameters
         self.font_family = "Arial"
         plt.rcParams["font.family"] = self.font_family
-        
+
         # Nature journal inspired color palette for proteins
         self.protein_colors = [
             "#4C72B0", "#DD8452", "#55A868", "#C44E52", "#8172B3",  # Main colors
             "#937860", "#DA8BC3", "#8C8C8C", "#CCB974", "#64B5CD"   # Secondary colors
         ]
-    
+
     # Update the plot_peptigram method with these improvements
     def plot_peptigram(
         self,
@@ -66,7 +66,7 @@ class ImmunoViz:
     ):
         """
         Create a PeptiGram visualization with protein-based coloring.
-        
+
         Parameters:
         -----------
         protein_ids : str or List[str]
@@ -121,33 +121,35 @@ class ImmunoViz:
         # Convert single protein ID to list
         if isinstance(protein_ids, str):
             protein_ids = [protein_ids]
-            
+
         # Filter data for the selected proteins
-        data = self.peptide_data[self.peptide_data['Protein'].isin(protein_ids)].copy()
-        
+        data = self.peptide_data[self.peptide_data['Protein'].isin(
+            protein_ids)].copy()
+
         if data.empty:
             print(f"No data found for proteins {protein_ids}")
             return
-                
+
         # Apply intensity threshold if specified
         if min_intensity is not None:
             data = data[data['Intensity'] >= min_intensity]
-                
+
         # Group peptides by their sequence
         peptide_groups = data.groupby(['Peptide', 'Protein', 'Start', 'End']).agg({
             'Intensity': ['mean', 'std', 'count'],
             group_by: lambda x: list(set(x))
         }).reset_index()
-            
-        peptide_groups.columns = ['Peptide', 'Protein', 'Start', 'End', 'Mean_Intensity', 'Std_Intensity', 'Count', 'Groups']
-            
+
+        peptide_groups.columns = ['Peptide', 'Protein', 'Start',
+                                  'End', 'Mean_Intensity', 'Std_Intensity', 'Count', 'Groups']
+
         # Determine groups to plot
         if groups is None:
             all_groups = []
             for g in peptide_groups['Groups']:
                 all_groups.extend(g)
             groups = sorted(list(set(all_groups)))
-        
+
         # Configure styling for publication-quality
         plt.style.use('default')
         plt.rcParams['font.family'] = 'sans-serif'
@@ -157,53 +159,55 @@ class ImmunoViz:
         plt.rcParams['ytick.major.width'] = 0.8
         plt.rcParams['xtick.direction'] = 'out'
         plt.rcParams['ytick.direction'] = 'out'
-            
+
         # Set colors and style elements
         density_color = '#555555'      # Darker gray for density plots
         grid_color = '#e5e5e5'         # Very light gray grid
         separator_color = '#cccccc'    # Light gray separator
         background_color = '#ffffff'   # White background
         text_color = '#333333'         # Dark gray for text
-            
+
         # Get proper colormaps
         try:
             protein_colormap = plt.cm.get_cmap(protein_cmap)
         except:
             # Default to tab10 if specified cmap doesn't exist
             protein_colormap = plt.cm.get_cmap('tab10')
-                
+
         # Create map of proteins to colors
         protein_to_color = {}
         for i, protein in enumerate(protein_ids):
             color_idx = i % protein_colormap.N
             protein_to_color[protein] = protein_colormap(color_idx)
-        
+
         # Set up available sequential colormaps
         sequential_cmaps = [
             "viridis", "plasma", "inferno", "magma", "cividis",
-            "Blues", "Greens", "Reds", "Purples", "Oranges", 
-            "YlOrBr", "YlOrRd", "OrRd", "PuRd", "RdPu", 
-            "BuPu", "GnBu", "PuBu", "YlGnBu", "PuBuGn", 
+            "Blues", "Greens", "Reds", "Purples", "Oranges",
+            "YlOrBr", "YlOrRd", "OrRd", "PuRd", "RdPu",
+            "BuPu", "GnBu", "PuBu", "YlGnBu", "PuBuGn",
             "BuGn", "YlGn"
         ]
-        
+
         # Set up intensity colormaps for each protein
         intensity_cmap_dict = {}
-        
+
         # Handle the case where intensity_cmaps is a list
         if isinstance(intensity_cmaps, list):
             for i, protein_id in enumerate(protein_ids):
                 # Get an intensity colormap for this protein
                 cmap_idx = i % len(intensity_cmaps)
                 cmap_name = intensity_cmaps[cmap_idx]
-                
+
                 # Ensure the colormap exists
                 if cmap_name in sequential_cmaps or cmap_name in plt.colormaps():
-                    intensity_cmap_dict[protein_id] = plt.cm.get_cmap(cmap_name)
+                    intensity_cmap_dict[protein_id] = plt.cm.get_cmap(
+                        cmap_name)
                 else:
                     # Fallback to a default sequential colormap
                     fallback_idx = i % len(sequential_cmaps)
-                    intensity_cmap_dict[protein_id] = plt.cm.get_cmap(sequential_cmaps[fallback_idx])
+                    intensity_cmap_dict[protein_id] = plt.cm.get_cmap(
+                        sequential_cmaps[fallback_idx])
         else:
             # If a single colormap is provided, use it for all proteins
             try:
@@ -215,51 +219,54 @@ class ImmunoViz:
                 # If it doesn't exist, assign a different sequential colormap to each protein
                 for i, protein_id in enumerate(protein_ids):
                     cmap_idx = i % len(sequential_cmaps)
-                    intensity_cmap_dict[protein_id] = plt.cm.get_cmap(sequential_cmaps[cmap_idx])
-        
+                    intensity_cmap_dict[protein_id] = plt.cm.get_cmap(
+                        sequential_cmaps[cmap_idx])
+
         # Set up figure with padding for external legend
         legend_width = 0.2 if external_legend else 0
-        
+
         # Adjust figure size
         fig_width = figsize[0] + (figsize[0] * legend_width)
         fig_height = figsize[1]
-        
+
         # Create figure
         n_groups = len(groups)
         fig = plt.figure(figsize=(fig_width, fig_height))
-        
+
         # Define grid layout with space for legend
         if external_legend:
-            gs = fig.add_gridspec(n_groups + 1, 2, width_ratios=[0.85, 0.15], height_ratios=[1] + [3] * n_groups)
+            gs = fig.add_gridspec(
+                n_groups + 1, 2, width_ratios=[0.85, 0.15], height_ratios=[1] + [3] * n_groups)
             main_axes = []
             legend_axes = []
-            
+
             # Create main plot axes
             for i in range(n_groups + 1):
                 main_axes.append(fig.add_subplot(gs[i, 0]))
                 if i > 0:  # Don't share x for the first axis (density plot)
                     main_axes[i].sharex(main_axes[0])
-            
+
             # Create legend axes
             legend_ax = fig.add_subplot(gs[0, 1])
             legend_ax.axis('off')
         else:
-            gs = fig.add_gridspec(n_groups + 1, 1, height_ratios=[1] + [3] * n_groups)
+            gs = fig.add_gridspec(
+                n_groups + 1, 1, height_ratios=[1] + [3] * n_groups)
             main_axes = []
-            
+
             # Create main plot axes
             for i in range(n_groups + 1):
                 main_axes.append(fig.add_subplot(gs[i, 0]))
                 if i > 0:  # Don't share x for the first axis (density plot)
                     main_axes[i].sharex(main_axes[0])
-        
+
         axs = main_axes
-        
+
         # Calculate limits
         min_start = int(peptide_groups['Start'].min())
         max_end = int(peptide_groups['End'].max())
         xlim = (min_start - 10, max_end + 10)
-        
+
         # Set up the figure with proper styling
         for ax in axs:
             ax.set_facecolor(background_color)
@@ -267,22 +274,22 @@ class ImmunoViz:
             ax.tick_params(colors=text_color)
             for spine in ax.spines.values():
                 spine.set_color(grid_color)
-        
+
         # Initialize density profiles for each protein
         all_proteins_density = np.zeros(max_end - min_start + 1)
         protein_densities = {}
-        
+
         # Plot protein overview at the top
         for protein_id in protein_ids:
             protein_peptides = peptide_groups[peptide_groups['Protein'] == protein_id]
-            
+
             if protein_peptides.empty:
                 continue
-                    
+
             # Create density profile for this protein
             positions = np.arange(min_start, max_end + 1)
             density = np.zeros(len(positions))
-            
+
             for _, peptide in protein_peptides.iterrows():
                 start, end = int(peptide['Start']), int(peptide['End'])
                 if start < min_start:
@@ -293,59 +300,70 @@ class ImmunoViz:
                 idx_end = end - min_start
                 if idx_start < len(density) and idx_end <= len(density):
                     density[idx_start:idx_end] += 1
-            
+
             # Store density for this protein
             protein_densities[protein_id] = density
             # Add to combined density
             all_proteins_density += density
-            
+
             # Get color for this protein
             protein_color = protein_to_color[protein_id]
-            
+
             # Plot density with publication-quality styling
-            axs[0].bar(positions, density, color=protein_color, alpha=0.75, width=1, 
-                    label=protein_id, edgecolor=None, linewidth=0)
-            
+            axs[0].bar(positions, density, color=protein_color, alpha=0.75, width=1,
+                       label=protein_id, edgecolor=None, linewidth=0)
+
             # Add elegant protein annotation
             if annotate and np.max(density) > 0:
                 max_pos = np.argmax(density) + min_start
                 axs[0].annotate(protein_id, xy=(max_pos, np.max(density)),
-                            xytext=(0, 5), textcoords='offset points',
-                            ha='center', va='bottom', fontsize=8,
-                            bbox=dict(boxstyle="round,pad=0.2", 
-                                    fc=background_color, ec='none', alpha=0.8),
-                            color=text_color, weight='normal')
-        
+                                xytext=(0, 5), textcoords='offset points',
+                                ha='center', va='bottom', fontsize=8,
+                                bbox=dict(boxstyle="round,pad=0.2",
+                                          fc=background_color, ec='none', alpha=0.8),
+                                color=text_color, weight='normal')
+
         # Auto-detect high density regions if requested
         auto_regions = []
         if highlight and auto_highlight and highlight_regions is None:
             # Apply smoothing to the density
-            smoothed_density = self._smooth_density(all_proteins_density, window_size=auto_highlight_window)
+            smoothed_density = self._smooth_density(
+                all_proteins_density, window_size=auto_highlight_window)
             threshold = np.max(smoothed_density) * auto_highlight_threshold
-            
+
             # Find regions above threshold
-            high_density_regions = self._find_high_density_regions(smoothed_density, threshold, min_start)
-            
+            high_density_regions = self._find_high_density_regions(
+                smoothed_density, threshold, min_start)
+
             # Apply highlighting for auto-detected regions
             if high_density_regions:
                 auto_regions = high_density_regions
                 highlight_regions = high_density_regions
-        
+
         # Styling for the top panel
         axs[0].set_xlim(xlim)
-        axs[0].set_ylabel('Density', color=text_color, fontweight='normal', fontsize=10)
+        axs[0].set_ylabel('Density', color=text_color,
+                          fontweight='normal', fontsize=14)
         axs[0].spines['top'].set_visible(False)
         axs[0].spines['right'].set_visible(False)
-        axs[0].set_yticks([])
-        
+        # Remove all ticks
+        # axs[0].set_yticks([])
+
+        # Instead of removing all ticks, set them appropriately
+        max_density = max(all_proteins_density)
+        axs[0].set_yticks([0, max_density/2, max_density])
+        axs[0].set_yticklabels(
+            [0, f"{max_density/2:.0f}", f"{max_density:.0f}"], fontsize=8, color="lightgray")
+
         # Create legend in the designated area if external
         if external_legend:
             # Create protein legend handles
             legend_handles = []
             for protein_id in protein_ids:
-                patch = plt.Line2D([0], [0], color=protein_to_color[protein_id], lw=4, label=protein_id)
+                patch = plt.Line2D(
+                    [0], [0], color=protein_to_color[protein_id], lw=4, label=protein_id)
                 legend_handles.append(patch)
-            
+
             # Add legend to the separate legend axis
             protein_legend = legend_ax.legend(
                 handles=legend_handles,
@@ -358,7 +376,7 @@ class ImmunoViz:
                 title='Proteins',
                 title_fontsize=10
             )
-            
+
             # Make sure legend title is properly formatted
             protein_legend.get_title().set_fontweight('bold')
         else:
@@ -372,197 +390,215 @@ class ImmunoViz:
                 title='Proteins',
                 title_fontsize=9
             )
+            # Set the font weight of the legend title to normal for a consistent appearance
             protein_legend.get_title().set_fontweight('normal')
-        
+
         # Add subtle grid lines
         axs[0].grid(axis='x', linestyle=':', alpha=0.2, color=grid_color)
-        
+
         # Highlight auto-detected regions in top panel with improved visibility
         if highlight and highlight_regions:
             for start, end in highlight_regions:
                 # Make highlight more visible in top density panel
                 axs[0].axvspan(start, end, alpha=highlight_alpha, color=highlight_color,
-                            edgecolor=None, linewidth=0)
-                
+                               edgecolor=None, linewidth=0)
+
                 # Add subtle lines to mark the region boundaries
-                axs[0].axvline(start, color=highlight_color, linestyle='-', alpha=0.3, linewidth=0.8)
-                axs[0].axvline(end, color=highlight_color, linestyle='-', alpha=0.3, linewidth=0.8)
-        
+                axs[0].axvline(start, color=highlight_color,
+                               linestyle='-', alpha=0.3, linewidth=0.8)
+                axs[0].axvline(end, color=highlight_color,
+                               linestyle='-', alpha=0.3, linewidth=0.8)
+
         # Find global min/max intensity for consistent colormap normalization
-        min_intensity_val = min_intensity if min_intensity is not None else peptide_groups['Mean_Intensity'].min()
+        min_intensity_val = min_intensity if min_intensity is not None else peptide_groups['Mean_Intensity'].min(
+        )
         max_intensity_val = peptide_groups['Mean_Intensity'].max()
-        
+
         # Create normalizations per protein to ensure consistent coloring
         protein_intensity_norms = {}
         for protein_id in protein_ids:
-            protein_data = peptide_groups[peptide_groups['Protein'] == protein_id]
+            protein_data = peptide_groups[peptide_groups['Protein']
+                                          == protein_id]
             if not protein_data.empty:
-                protein_min = min_intensity if min_intensity is not None else protein_data['Mean_Intensity'].min()
+                protein_min = min_intensity if min_intensity is not None else protein_data['Mean_Intensity'].min(
+                )
                 protein_max = protein_data['Mean_Intensity'].max()
-                protein_intensity_norms[protein_id] = plt.Normalize(protein_min, protein_max)
-        
+                protein_intensity_norms[protein_id] = plt.Normalize(
+                    protein_min, protein_max)
+
         # Plot peptides by group
         for i, group in enumerate(groups):
             ax = axs[i + 1]
-            
+
             # Filter peptides for this group
-            group_peptides = peptide_groups[peptide_groups['Groups'].apply(lambda x: group in x)]
-            
+            group_peptides = peptide_groups[peptide_groups['Groups'].apply(
+                lambda x: group in x)]
+
             if group_peptides.empty:
                 ax.set_visible(False)
                 continue
-            
+
             # group_peptides['Length'] = group_peptides['End'] - group_peptides['Start']
-            group_peptides.loc[:, 'Length'] = group_peptides['End'] - group_peptides['Start']
+            group_peptides.loc[:, 'Length'] = group_peptides['End'] - \
+                group_peptides['Start']
 
             # Calculate maximum height needed
             max_height = self._calculate_plot_height(group_peptides, xlim)
-            
+
             # Initialize space tracking array
             spaces = np.zeros((max_height, int(xlim[1] - xlim[0] + 1)))
-            
+
             # Sort peptides by start position and length
-            group_peptides = group_peptides.sort_values(['Start', 'End'], ascending=[True, False])
-            
+            group_peptides = group_peptides.sort_values(
+                ['Start', 'End'], ascending=[True, False])
+
             # Plot each peptide
             for idx, peptide in group_peptides.iterrows():
                 start = int(peptide['Start'])
                 end = int(peptide['End'])
                 protein_id = peptide['Protein']
-                
+
                 # Get base color for this protein
                 base_color = protein_to_color[protein_id]
                 final_color = base_color
-                
+
                 # Apply coloring based on selection
                 if color_by_protein_and_intensity:
                     # Get intensity value and normalize using per-protein normalization
                     intensity_val = peptide['Mean_Intensity']
-                    
+
                     # Get normalization for this protein
                     if protein_id in protein_intensity_norms:
                         norm = protein_intensity_norms[protein_id]
                         intensity_normalized = norm(intensity_val)
                     else:
                         # Fallback to global normalization
-                        intensity_normalized = plt.Normalize(min_intensity_val, max_intensity_val)(intensity_val)
-                    
+                        intensity_normalized = plt.Normalize(
+                            min_intensity_val, max_intensity_val)(intensity_val)
+
                     # Get the appropriate colormap for this protein
                     intensity_cmap = intensity_cmap_dict[protein_id]
-                    
+
                     # Get color from the protein's intensity colormap
                     if intensity_normalized < 0:
                         intensity_normalized = 0
                     elif intensity_normalized > 1:
                         intensity_normalized = 1
-                        
+
                     final_color = intensity_cmap(intensity_normalized)
-                    
+
                 elif color_by == 'intensity':
                     intensity_val = peptide['Mean_Intensity']
-                    
+
                     # Use per-protein normalization and colormap
                     if protein_id in protein_intensity_norms:
                         norm = protein_intensity_norms[protein_id]
                         intensity_normalized = norm(intensity_val)
                     else:
                         # Fallback to global normalization
-                        intensity_normalized = plt.Normalize(min_intensity_val, max_intensity_val)(intensity_val)
-                    
+                        intensity_normalized = plt.Normalize(
+                            min_intensity_val, max_intensity_val)(intensity_val)
+
                     # Use the protein's assigned colormap
                     intensity_cmap = intensity_cmap_dict[protein_id]
                     final_color = intensity_cmap(intensity_normalized)
-                    
+
                 elif color_by == 'count':
                     count_val = peptide['Count']
-                    count_normalized = plt.Normalize(1, group_peptides['Count'].max())(count_val)
+                    count_normalized = plt.Normalize(
+                        1, group_peptides['Count'].max())(count_val)
                     final_color = plt.cm.Blues(count_normalized)
-                    
+
                 elif color_by == 'length':
                     length_val = peptide['End'] - peptide['Start']
-                    length_normalized = plt.Normalize(group_peptides['Length'].min(), group_peptides['Length'].max())(length_val)
+                    length_normalized = plt.Normalize(
+                        group_peptides['Length'].min(), group_peptides['Length'].max())(length_val)
                     final_color = plt.cm.Greens(length_normalized)
-                
+
                 # Find available space for this peptide
                 for height in range(max_height):
                     if start < xlim[0]:
                         start = xlim[0]
                     if end > xlim[1]:
                         end = xlim[1]
-                    
+
                     space_start = max(0, start - xlim[0])
                     space_end = min(end - xlim[0], xlim[1] - xlim[0])
-                    
+
                     if space_start >= spaces.shape[1] or space_end >= spaces.shape[1]:
                         continue
-                        
+
                     space_needed = spaces[height, space_start:space_end+1]
                     if np.sum(space_needed) == 0:  # Space is available
                         spaces[height, space_start:space_end+1] = 1
                         # Publication-quality peptide visualization
                         ax.plot(
-                            [start, end], 
-                            [-height-0.4, -height-0.4], 
+                            [start, end],
+                            [-height-0.4, -height-0.4],
                             linewidth=2.5,
                             solid_capstyle='round',
                             color=final_color,
                             alpha=0.95,
                             path_effects=[
                                 path_effects.withStroke(
-                                    linewidth=3.0, 
-                                    foreground=(0, 0, 0, 0.2), 
+                                    linewidth=3.0,
+                                    foreground=(0, 0, 0, 0.2),
                                     alpha=0.3
                                 )
                             ]
                         )
                         break
-            
+
             # Set plot limits and labels
             ax.set_ylim(-max_height, 0)
             ax.set_xlim(xlim)
-            
+
             # Add styled group label - ensure it's visible and consistent
-            ax.set_ylabel(group, fontweight='normal', color=text_color, fontsize=10)
+            ax.set_ylabel(group, fontweight='normal',
+                          color=text_color, fontsize=14)
             ax.set_yticks([])
             ax.spines['top'].set_visible(False)
             ax.spines['right'].set_visible(False)
             ax.spines['left'].set_visible(False)
-            
+
             # Add subtle grid lines
             ax.grid(axis='x', linestyle=':', alpha=0.15, color=grid_color)
-            
+
             # Add separator line
-            ax.axhline(0, color=separator_color, linestyle=':', alpha=0.4, 
-                    linewidth=0.8, dash_capstyle='round')
-            
+            ax.axhline(0, color=separator_color, linestyle=':', alpha=0.4,
+                       linewidth=0.8, dash_capstyle='round')
+
             # Highlight regions if specified and highlighting is enabled
             if highlight and highlight_regions:
                 for start, end in highlight_regions:
                     # Apply highlighting with improved visibility
                     ax.axvspan(start, end, alpha=highlight_alpha, color=highlight_color,
-                            edgecolor=None, linewidth=0)
-                            
+                               edgecolor=None, linewidth=0)
+
                     # Add subtle boundary lines
-                    ax.axvline(start, color=highlight_color, linestyle='-', alpha=0.3, linewidth=0.8)
-                    ax.axvline(end, color=highlight_color, linestyle='-', alpha=0.3, linewidth=0.8)
-        
+                    ax.axvline(start, color=highlight_color,
+                               linestyle='-', alpha=0.3, linewidth=0.8)
+                    ax.axvline(end, color=highlight_color,
+                               linestyle='-', alpha=0.3, linewidth=0.8)
+
         # Set title
         if title is None:
             if len(protein_ids) == 1:
                 title = f"Peptide Coverage: {protein_ids[0]}"
             else:
                 title = f"Protein Peptide Coverage Analysis"
-        
-        plt.suptitle(title, fontsize=14, y=0.98, fontweight='bold', color=text_color)
-        
+
+        plt.suptitle(title, fontsize=14, y=0.98,
+                     fontweight='bold', color=text_color)
+
         # Add subtitle if multiple proteins
         if len(protein_ids) > 1:
             protein_str = ", ".join(protein_ids)
             if len(protein_str) > 50:  # Truncate if too long
                 protein_str = protein_str[:47] + "..."
-            plt.figtext(0.5, 0.94, protein_str, ha='center', color=text_color, 
-                    fontsize=9, fontstyle='italic')
-        
+            plt.figtext(0.5, 0.94, protein_str, ha='center', color=text_color,
+                        fontsize=9, fontstyle='italic')
+
         # Add subtitle for coloring method
         coloring_method = ""
         if color_by_protein_and_intensity:
@@ -575,113 +611,118 @@ class ImmunoViz:
             coloring_method = "Colored by detection count"
         elif color_by == 'length':
             coloring_method = "Colored by peptide length"
-                
+
         if coloring_method:
             y_pos = 0.92 if len(protein_ids) <= 1 else 0.90
-            plt.figtext(0.5, y_pos, coloring_method, ha='center', color=text_color, 
-                    fontsize=9, fontstyle='italic')
-        
+            plt.figtext(0.5, y_pos, coloring_method, ha='center', color=text_color,
+                        fontsize=9, fontstyle='italic')
+
         # Add subtitle for auto-detected regions if applicable
         if auto_regions and len(auto_regions) > 0:
-            regions_str = ", ".join([f"{start}-{end}" for start, end in auto_regions])
-            y_pos = 0.90 if len(protein_ids) <= 1 and not coloring_method else 0.88
-            plt.figtext(0.5, y_pos, f"Auto-highlighted regions: {regions_str}", 
-                    ha='center', fontsize=9, fontstyle='italic', color=highlight_color)
-        
+            regions_str = ", ".join(
+                [f"{start}-{end}" for start, end in auto_regions])
+            y_pos = 0.90 if len(
+                protein_ids) <= 1 and not coloring_method else 0.88
+            plt.figtext(0.5, y_pos, f"Auto-highlighted regions: {regions_str}",
+                        ha='center', fontsize=9, fontstyle='italic', color=highlight_color)
+
         # Set x-label on the bottom axis only
-        axs[-1].set_xlabel('Amino Acid Position', fontweight='normal', color=text_color, fontsize=10)
-        
+        axs[-1].set_xlabel('Amino Acid Position',
+                           fontweight='normal', color=text_color, fontsize=10)
+
         # Add intensity colorbars for each protein if using protein+intensity
         if color_by_protein_and_intensity and external_legend:
             # Calculate how much space each colorbar needs
             colorbar_height = 0.7 / len(protein_ids)
             colorbar_padding = 0.02
-            
+
             for i, protein_id in enumerate(protein_ids):
                 if protein_id not in protein_intensity_norms:
                     continue
-                    
+
                 # Calculate position for this colorbar
-                bottom_position = 0.75 - (i * (colorbar_height + colorbar_padding))
+                bottom_position = 0.75 - \
+                    (i * (colorbar_height + colorbar_padding))
                 position = [0.88, bottom_position, 0.03, colorbar_height]
-                
+
                 # Create axes for the colorbar
                 cax = fig.add_axes(position)
-                
+
                 # Get the appropriate colormap and normalization
                 cmap = intensity_cmap_dict[protein_id]
                 norm = protein_intensity_norms[protein_id]
-                
+
                 # Create colorbar
                 sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
                 sm.set_array([])
                 cbar = plt.colorbar(sm, cax=cax)
-                
+
                 # Add the protein ID as the label
                 cbar.set_label(f'{protein_id}', fontweight='bold', fontsize=8)
                 cbar.ax.tick_params(labelsize=7)
-        
+
         # Add a label for the intensity legend
         if color_by_protein_and_intensity and external_legend:
             legend_label_ypos = 0.85
-            legend_ax.text(0.5, legend_label_ypos, 'Intensity Scales', 
-                        horizontalalignment='center', verticalalignment='center',
-                        transform=legend_ax.transAxes, fontsize=10, fontweight='bold')
-        
+            legend_ax.text(0.5, legend_label_ypos, 'Intensity Scales',
+                           horizontalalignment='center', verticalalignment='center',
+                           transform=legend_ax.transAxes, fontsize=10, fontweight='bold')
+
         # Apply final layout adjustments
         plt.tight_layout()
         plt.subplots_adjust(hspace=0.05, top=0.9)
-        
+
         # Set DPI for higher quality
         fig.set_dpi(dpi)
-        
+
         return fig, axs
-    
+
     def _calculate_plot_height(self, peptide_data: pd.DataFrame, xlim: Tuple[int, int]) -> int:
         """
         Calculate the required height for plotting peptides without overlap.
         """
         # Sort peptides by start position and length
-        peptides = peptide_data.sort_values(['Start', 'Length'], ascending=[True, False])
-        
+        peptides = peptide_data.sort_values(
+            ['Start', 'Length'], ascending=[True, False])
+
         # Initialize space tracking array
         spaces = np.zeros((100, int(xlim[1] - xlim[0] + 1)))
         max_height = 0
-        
+
         # Track required height
         for _, peptide in peptides.iterrows():
             start = int(peptide['Start'])
             end = int(peptide['End'])
-            
+
             # Skip peptides outside plot range
             if end < xlim[0] or start > xlim[1]:
                 continue
-                
+
             # Adjust to plot coordinates
             plot_start = max(0, start - xlim[0])
             plot_end = min(end - xlim[0], xlim[1] - xlim[0])
-            
+
             # Find available space
             placed = False
             for height in range(spaces.shape[0]):
                 if height > max_height:
                     max_height = height
-                
+
                 if plot_start >= spaces.shape[1] or plot_end >= spaces.shape[1]:
                     continue
-                    
+
                 space_needed = spaces[height, plot_start:plot_end+1]
                 if np.sum(space_needed) == 0:  # Space is available
                     spaces[height, plot_start:plot_end+1] = 1
                     placed = True
                     break
-            
+
             # If no space found, we need more height
             if not placed:
                 max_height = spaces.shape[0]
-        
+
         return max_height + 1  # Add 1 for padding
-    
+
     def _adjust_color(self, color, value):
         """
         Adjust color based on intensity value.
@@ -689,10 +730,10 @@ class ImmunoViz:
         # Convert string colors to RGB
         if isinstance(color, str):
             color = plt.matplotlib.colors.to_rgba(color)
-            
+
         # For darker values, maintain more of the original color but adjust brightness
         r, g, b, a = color
-        
+
         # Adjust color based on value while preserving hue
         if value < 0.5:
             # Darken
@@ -706,14 +747,14 @@ class ImmunoViz:
             r = r + (1 - r) * factor
             g = g + (1 - g) * factor
             b = b + (1 - b) * factor
-            
+
         return (r, g, b, a)
-    
+
     def _adjust_color_by_intensity(self, color, intensity, scale_factor=0.7):
         """
         Adjust color by intensity while preserving the protein's base color.
         Enhanced version for better visibility of intensity differences.
-        
+
         Parameters:
         -----------
         color : tuple or str
@@ -723,7 +764,7 @@ class ImmunoViz:
         scale_factor : float (0-1)
             How much the intensity should influence the color (default: 0.7)
             Higher values make intensity differences more pronounced
-            
+
         Returns:
         --------
         tuple: (r, g, b, a) color
@@ -731,19 +772,19 @@ class ImmunoViz:
         # Convert string colors to RGB
         if isinstance(color, str):
             color = plt.matplotlib.colors.to_rgba(color)
-            
+
         r, g, b, a = color
-        
+
         # Enhanced color adjustment:
         # For low intensity (0-0.5), darken the color significantly
         # For high intensity (0.5-1.0), brighten and increase saturation
-        
+
         if intensity < 0.5:
             # Map 0-0.5 to 0.1-0.5 (avoid going completely black)
             mapped_intensity = 0.1 + intensity * 0.8
             # Apply non-linear darkening for better differentiation
             factor = mapped_intensity ** (1.5 * scale_factor)
-            
+
             # Preserve hue but reduce brightness
             new_r = r * factor
             new_g = g * factor
@@ -751,7 +792,7 @@ class ImmunoViz:
         else:
             # Map 0.5-1.0 to 0.5-1.2 (allow some brightening beyond original)
             mapped_intensity = 0.5 + (intensity - 0.5) * 1.4
-            
+
             # For high intensity: preserve or increase saturation while brightening
             # Find dominant color channel to preserve hue
             max_channel = max(r, g, b)
@@ -761,30 +802,30 @@ class ImmunoViz:
             else:
                 # Calculate how much to brighten each channel
                 factor = mapped_intensity / max_channel
-                
+
                 # Brighten proportionally to preserve hue
                 new_r = min(1, r * factor * (1 + scale_factor * 0.5))
                 new_g = min(1, g * factor * (1 + scale_factor * 0.5))
                 new_b = min(1, b * factor * (1 + scale_factor * 0.5))
-        
+
         # Ensure values stay in valid range
         new_r = max(0, min(1, new_r))
         new_g = max(0, min(1, new_g))
         new_b = max(0, min(1, new_b))
-        
+
         return (new_r, new_g, new_b, a)
-    
+
     def _smooth_density(self, density, window_size=10):
         """
         Apply smoothing to density array for better peak detection.
-        
+
         Parameters:
         -----------
         density : np.ndarray
             Density array to smooth
         window_size : int, optional
             Size of the smoothing window (default: 10)
-            
+
         Returns:
         --------
         np.ndarray: Smoothed density
@@ -792,18 +833,18 @@ class ImmunoViz:
         # Create simple moving average smoothing
         kernel = np.ones(window_size) / window_size
         smoothed = np.convolve(density, kernel, mode='same')
-        
+
         # Handle edge effects by replacing edges with original values
         half_window = window_size // 2
         smoothed[:half_window] = density[:half_window]
         smoothed[-half_window:] = density[-half_window:]
-        
+
         return smoothed
 
     def _find_high_density_regions(self, density, threshold, min_start, min_region_size=5, max_gap=3):
         """
         Find regions with high peptide density.
-        
+
         Parameters:
         -----------
         density : np.ndarray
@@ -816,52 +857,55 @@ class ImmunoViz:
             Minimum size of a region to be considered (default: 5)
         max_gap : int, optional
             Maximum gap between high density points to be considered same region (default: 3)
-        
+
         Returns:
         --------
         List[Tuple[int, int]]: List of (start, end) high density regions
         """
         # Find positions above threshold
         high_density_positions = np.where(density >= threshold)[0]
-        
+
         if len(high_density_positions) == 0:
             return []
-        
+
         # Group positions into contiguous regions
         regions = []
         current_region_start = high_density_positions[0]
         prev_pos = high_density_positions[0]
-        
+
         for pos in high_density_positions[1:]:
             # If there's a gap larger than max_gap, end the current region
             if pos - prev_pos > max_gap:
                 if prev_pos - current_region_start + 1 >= min_region_size:
-                    regions.append((current_region_start + min_start, prev_pos + min_start + 1))
+                    regions.append(
+                        (current_region_start + min_start, prev_pos + min_start + 1))
                 current_region_start = pos
             prev_pos = pos
-        
+
         # Add the last region if it meets minimum size
         if prev_pos - current_region_start + 1 >= min_region_size:
-            regions.append((current_region_start + min_start, prev_pos + min_start + 1))
-        
+            regions.append((current_region_start + min_start,
+                           prev_pos + min_start + 1))
+
         # Merge overlapping regions
         if len(regions) > 1:
             regions.sort()
             merged_regions = [regions[0]]
-            
+
             for current in regions[1:]:
                 previous = merged_regions[-1]
                 if current[0] <= previous[1]:
                     # Regions overlap, merge them
-                    merged_regions[-1] = (previous[0], max(previous[1], current[1]))
+                    merged_regions[-1] = (previous[0],
+                                          max(previous[1], current[1]))
                 else:
                     # No overlap, add as new region
                     merged_regions.append(current)
-            
+
             regions = merged_regions
-        
+
         return regions
-    
+
     def export_peptogram(self, protein_ids: Union[str, List[str]], output_file: str, **kwargs):
         """
         Create and save a PeptiGram visualization to a file.
@@ -870,4 +914,3 @@ class ImmunoViz:
         fig.savefig(output_file, dpi=300, bbox_inches='tight')
         plt.close(fig)
         print(f"PeptiGram saved to {output_file}")
-          
