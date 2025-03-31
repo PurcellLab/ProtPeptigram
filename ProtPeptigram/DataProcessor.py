@@ -271,10 +271,12 @@ class PeptideDataProcessor:
         # Filter by intensity threshold and minimum samples
         if intensity_threshold > 0 or min_samples > 1:
             # Count how many samples have intensity above threshold for each peptide
-            detection_counts = (data[self.intensity_cols] > intensity_threshold).sum(axis=1)
+            # detection_counts = (data[self.intensity_cols] > intensity_threshold).sum(axis=1)
+            # Use apply to count the number of samples above the threshold for each peptide in each sample instead of sum of all samples
+            detection_counts = (data[self.intensity_cols] > intensity_threshold).apply(lambda x: sum(x >= intensity_threshold), axis=1)
             initial_count = len(data)
             data = data[detection_counts >= min_samples]
-            console.log(f"Removed {initial_count - len(data)} entries below intensity threshold or minimum sample count", style="bold green")
+            console.log(f"Removed {initial_count - len(data)} entries below intensity threshold of {intensity_threshold} or minimum sample count of {min_samples}", style="bold green")
         
         # Prepare the formatted data for ImmunoViz
         formatted_rows = []
@@ -371,7 +373,7 @@ class PeptideDataProcessor:
         # Import ImmunoViz here to avoid circular imports
         try:
             # Assuming ImmunoViz is defined elsewhere or imported
-            from prot_peptigram.viz import ImmunoViz
+            from ProtPeptigram.viz import ImmunoViz
             # Use a dataframe with just the columns ImmunoViz expects
             immunoviz_df = self.peptide_df[['Peptide', 'Protein', 'Start', 'End', 'Intensity', 'Sample', 'Length']].copy()
             return ImmunoViz(immunoviz_df)
@@ -423,14 +425,14 @@ class PeptideDataProcessor:
 
 # Example of how to use the updated class
 # if __name__ == "__main__":
-#     # Test the PTM removal function
-#     processor = PeptideDataProcessor()
-#     test_peptide = "IVS(+15.99)Y(+15.99)YDDIANSEENPTPG"
-#     clean_peptide = processor.remove_ptm(test_peptide)
-#     console.print(f"Original peptide: {test_peptide}")
-#     print(f"Clean peptide: {clean_peptide}")
+    # Test the PTM removal function
+    # processor = PeptideDataProcessor()
+    # test_peptide = "IVS(+15.99)Y(+15.99)YDDIANSEENPTPG"
+    # clean_peptide = processor.remove_ptm(test_peptide)
+    # console.print(f"Original peptide: {test_peptide}")
+    # print(f"Clean peptide: {clean_peptide}")
     
     # Full example would need real data files
-    # processor = PeptideDataProcessor("my_peaks_data.csv", "protein_sequences.fasta")
+    # processor = PeptideDataProcessor("../data/JCI146771_Mouse_peptides_peaks_online.csv", "../data/uniprotkb_proteome_UP000000589_AND_revi_2025_03_12.fasta")
     # processor.filter_and_format_data()
     # viz = processor.create_immunoviz_object()
