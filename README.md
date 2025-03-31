@@ -106,6 +106,13 @@ fig, _ = viz.plot_peptigram(
 fig.savefig("protein_visualization.png", dpi=300, bbox_inches="tight")
 ```
 
+## Running on Google Colab
+
+You can quickly try out ProtPeptigram on Google Colab without installing anything locally. Click the link below to open the example notebook:
+
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Sanpme66/ProtPeptigram/blob/main/example/example.ipynb)
+
+
 ## Documentation
 
 For detailed documentation including API reference, tutorials, and examples:
