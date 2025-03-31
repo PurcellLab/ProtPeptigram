@@ -14,6 +14,10 @@ build:
       - chmod +x docs/build_docs.sh
       - cd docs && ./build_docs.sh
 
+# Sphinx configuration (required by Read the Docs)
+sphinx:
+  configuration: docs/conf.py
+
 # Python requirements
 python:
   install:
