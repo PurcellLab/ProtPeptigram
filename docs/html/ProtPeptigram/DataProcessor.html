@@ -1,0 +1,1088 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.6">
+<title>ProtPeptigram.DataProcessor API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source > summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible;min-width:max-content}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin:1em 0}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+/* Collapse source docstrings */
+setTimeout(() => {
+[...document.querySelectorAll('.hljs.language-python > .hljs-string')]
+.filter(el => el.innerHTML.length > 200 && ['"""', "'''"].includes(el.innerHTML.substring(0, 3)))
+.forEach(el => {
+let d = document.createElement('details');
+d.classList.add('hljs-string');
+d.innerHTML = '<summary>"""</summary>' + el.innerHTML.substring(3);
+el.replaceWith(d);
+});
+}, 100);
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>ProtPeptigram.DataProcessor</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="ProtPeptigram.DataProcessor.PeptideDataProcessor"><code class="flex name class">
+<span>class <span class="ident">PeptideDataProcessor</span></span>
+<span>(</span><span>peaks_file: str = None,<br>fasta_file: str = None,<br>contaminant_keywords: List[str] = None,<br>sample_prefix: str = 'Intensity_')</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PeptideDataProcessor:
+    &#34;&#34;&#34;
+    Process peptide data from PEAKS Online output for visualization with ImmunoViz.
+    
+    This class handles:
+    1. Loading and parsing PEAKS output CSV files
+    2. Filtering contaminants and iRT peptides
+    3. Extracting protein IDs from Accession column
+    4. Mapping peptides to protein sequences to determine start/end positions
+    5. Formatting data for ImmunoViz visualization
+    &#34;&#34;&#34;
+    
+    def __init__(self, 
+                 peaks_file: str = None, 
+                 fasta_file: str = None,
+                 contaminant_keywords: List[str] = None,
+                 sample_prefix: str = &#34;Intensity_&#34;):
+        &#34;&#34;&#34;
+        Initialize the PeptideDataProcessor.
+        
+        Parameters:
+        -----------
+        peaks_file : str, optional
+            Path to the PEAKS output CSV file
+        fasta_file : str, optional
+            Path to the FASTA file containing protein sequences
+        contaminant_keywords : List[str], optional
+            List of keywords to identify contaminant proteins
+        sample_prefix : str, optional
+            Prefix for sample intensity columns (default: &#34;Intensity_&#34;)
+        &#34;&#34;&#34;
+        # Set default contaminant keywords if not provided
+        if contaminant_keywords is None:
+            self.contaminant_keywords = [
+                &#34;CONTAM&#34;, &#34;CONT_&#34;, &#34;REV_&#34;, &#34;iRT&#34;, &#34;REVERSE&#34; ,&#34;DECOY&#34; #, &#34;sp|&#34;, &#34;tr|&#34;, &#34;keratin&#34;, &#34;KRT&#34;
+                
+            ]
+        else:
+            self.contaminant_keywords = contaminant_keywords
+            
+        self.sample_prefix = sample_prefix
+        self.peaks_data = None
+        self.protein_sequences = {}
+        self.peptide_df = None
+        
+        # Load data if provided
+        if peaks_file is not None:
+            self.load_peaks_data(peaks_file)
+        
+        if fasta_file is not None:
+            self.load_protein_sequences(fasta_file)
+    
+    def load_peaks_data(self, file_path: str) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Load peptide data from PEAKS output CSV file.
+        
+        Parameters:
+        -----------
+        file_path : str
+            Path to the PEAKS output CSV file
+            
+        Returns:
+        --------
+        pd.DataFrame: Loaded data
+        &#34;&#34;&#34;
+        try:
+            self.peaks_data = pd.read_csv(file_path)
+            console.log(f&#34;Loaded {len(self.peaks_data)} peptide entries from {file_path}&#34;, style=&#34;bold green&#34;)
+            
+            # Check required columns
+            required_cols = [&#39;Peptide&#39;, &#39;Accession&#39;]
+            missing_cols = [col for col in required_cols if col not in self.peaks_data.columns]
+            
+            if missing_cols:
+                raise ValueError(f&#34;Missing required columns: {&#39;, &#39;.join(missing_cols)}&#34;)
+            
+            # Find intensity columns
+            self.intensity_cols = [col for col in self.peaks_data.columns if col.startswith(self.sample_prefix)]
+            
+            if not self.intensity_cols:
+                console.log(f&#34;Warning: No columns with prefix &#39;{self.sample_prefix}&#39; found.&#34;, style=&#34;bold yellow&#34;)
+            else:
+                console.log(f&#34;Found {len(self.intensity_cols)} intensity columns: {&#39;, &#39;.join(self.intensity_cols)}&#34;, style=&#34;bold green&#34;)
+                
+            return self.peaks_data
+            
+        except Exception as e:
+            console.log(f&#34;Error loading PEAKS data: {str(e)}&#34;, style=&#34;bold red&#34;)
+            raise
+    
+    def load_protein_sequences(self, fasta_path: str) -&gt; Dict[str, str]:
+        &#34;&#34;&#34;
+        Load protein sequences from a FASTA file.
+        
+        Parameters:
+        -----------
+        fasta_path : str
+            Path to the FASTA file
+            
+        Returns:
+        --------
+        Dict[str, str]: Dictionary mapping protein IDs to sequences
+        &#34;&#34;&#34;
+        try:
+            # Parse the FASTA file
+            for record in SeqIO.parse(fasta_path, &#34;fasta&#34;):
+                # Extract the protein ID from the FASTA header
+                protein_id = record.id
+                # Store the sequence
+                self.protein_sequences[protein_id] = str(record.seq)
+                
+                # Also store with description for more flexible matching
+                self.protein_sequences[record.description] = str(record.seq)
+            
+            console.log(f&#34;Loaded {len(self.protein_sequences)} protein sequences from {fasta_path}&#34;, style=&#34;bold green&#34;)
+            return self.protein_sequences
+            
+        except Exception as e:
+            console.log(f&#34;Error loading protein sequences: {str(e)}&#34;, style=&#34;bold red&#34;)
+            raise
+    
+    def is_contaminant(self, accession: str) -&gt; bool:
+        &#34;&#34;&#34;
+        Check if a protein accession belongs to a contaminant.
+        
+        Parameters:
+        -----------
+        accession : str
+            Protein accession to check
+            
+        Returns:
+        --------
+        bool: True if the accession is a contaminant, False otherwise
+        &#34;&#34;&#34;
+        if pd.isna(accession) or accession == &#34;&#34;:
+            return True
+            
+        for keyword in self.contaminant_keywords:
+            if keyword.lower() in accession.lower():
+                return True
+        return False
+        
+    def remove_ptm(self, peptide: str) -&gt; str:
+        &#34;&#34;&#34;
+        Remove post-translational modifications (PTMs) from peptide sequences.
+        Handles modifications like M(+15.99) and other mass shift notations.
+        
+        Parameters:
+        -----------
+        peptide : str
+            Peptide sequence with PTM annotations
+            
+        Returns:
+        --------
+        str: Clean peptide sequence without PTM annotations
+        &#34;&#34;&#34;
+        if peptide is None or pd.isna(peptide):
+            return &#34;&#34;
+            
+        # Regular expression to match PTM patterns like M(+15.99)
+        # Matches any character followed by parentheses containing +/- and numbers
+        ptm_pattern = r&#39;([A-Z])\([+\-][0-9.]+\)&#39;
+        
+        # Replace each match with just the amino acid
+        clean_peptide = re.sub(ptm_pattern, r&#39;\1&#39;, peptide)
+        
+        return clean_peptide
+    
+    def extract_protein_ids(self, accession_value: str) -&gt; List[str]:
+        &#34;&#34;&#34;
+        Extract protein IDs from an accession value, which may contain multiple IDs.
+        
+        Parameters:
+        -----------
+        accession_value : str
+            Accession value from the PEAKS output
+            
+        Returns:
+        --------
+        List[str]: List of protein IDs
+        &#34;&#34;&#34;
+        if pd.isna(accession_value) or accession_value == &#34;&#34;:
+            return []
+            
+        # Split by common delimiters
+        protein_ids = re.split(r&#39;[,:;|/\s]+&#39;, accession_value)
+        
+        # Remove empty entries and trim whitespace
+        protein_ids = [pid.strip() for pid in protein_ids if pid.strip()]
+        
+        return protein_ids
+    
+    def find_peptide_position(self, peptide: str, protein_sequence: str) -&gt; Tuple[int, int]:
+        &#34;&#34;&#34;
+        Find the start and end positions of a peptide in a protein sequence.
+        Automatically removes PTMs before searching.
+        
+        Parameters:
+        -----------
+        peptide : str
+            Peptide sequence (may contain PTMs)
+        protein_sequence : str
+            Protein sequence
+                
+        Returns:
+        --------
+        Tuple[int, int]: (start, end) positions (1-based indexing)
+        &#34;&#34;&#34;
+        # Remove PTMs from the peptide sequence
+        clean_peptide = self.remove_ptm(peptide)
+        
+        # Find the peptide in the protein sequence
+        start_pos = protein_sequence.find(clean_peptide)
+        
+        if start_pos == -1:
+            return (-1, -1)
+            
+        end_pos = start_pos + len(clean_peptide)
+        
+        # Convert to 1-based indexing
+        return (start_pos + 1, end_pos)
+    
+    def filter_and_format_data(self, 
+                               filter_contaminants: bool = True, 
+                               intensity_threshold: float = 0.0,
+                               min_samples: int = 1) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;
+        Filter and format the PEAKS data for ImmunoViz.
+        
+        Parameters:
+        -----------
+        filter_contaminants : bool, optional
+            Whether to filter out contaminants (default: True)
+        intensity_threshold : float, optional
+            Minimum intensity threshold (default: 0.0)
+        min_samples : int, optional
+            Minimum number of samples a peptide must be detected in (default: 1)
+            
+        Returns:
+        --------
+        pd.DataFrame: Formatted data for ImmunoViz
+        &#34;&#34;&#34;
+        if self.peaks_data is None:
+            raise ValueError(&#34;PEAKS data not loaded. Call load_peaks_data() first.&#34;)
+            
+        if not self.intensity_cols:
+            raise ValueError(f&#34;No intensity columns found with prefix &#39;{self.sample_prefix}&#39;&#34;)
+            
+        # Make a copy to avoid modifying the original data
+        data = self.peaks_data.copy()
+        
+        # Capitalize the first letter of all column names
+        #data.columns = [col.capitalize() for col in data.columns]
+        
+        # Filter out contaminants
+        if filter_contaminants:
+            initial_count = len(data)
+            data = data[~data[&#39;Accession&#39;].apply(self.is_contaminant)]
+            console.log(f&#34;Removed {initial_count - len(data)} contaminant entries&#34;, style=&#34;bold green&#34;)
+        
+        # Filter by intensity threshold and minimum samples
+        if intensity_threshold &gt; 0 or min_samples &gt; 1:
+            # Count how many samples have intensity above threshold for each peptide
+            # detection_counts = (data[self.intensity_cols] &gt; intensity_threshold).sum(axis=1)
+            # Use apply to count the number of samples above the threshold for each peptide in each sample instead of sum of all samples
+            detection_counts = (data[self.intensity_cols] &gt; intensity_threshold).apply(lambda x: sum(x &gt;= intensity_threshold), axis=1)
+            initial_count = len(data)
+            data = data[detection_counts &gt;= min_samples]
+            console.log(f&#34;Removed {initial_count - len(data)} entries below intensity threshold of {intensity_threshold} or minimum sample count of {min_samples}&#34;, style=&#34;bold green&#34;)
+        
+        # Prepare the formatted data for ImmunoViz
+        formatted_rows = []
+        
+        # Extract sample names from intensity columns
+        sample_names = [col.replace(self.sample_prefix, &#39;&#39;) for col in self.intensity_cols]
+        
+        # Process each peptide
+        for _, row in data.iterrows():
+            peptide = row[&#39;Peptide&#39;]
+            # Get clean peptide for length calculation
+            clean_peptide = self.remove_ptm(peptide)
+            
+            # Get all protein IDs for this peptide
+            protein_ids = self.extract_protein_ids(row[&#39;Accession&#39;])
+            
+            if not protein_ids:
+                continue
+                
+            # Process each protein ID
+            for protein_id in protein_ids:
+                # Find the protein sequence
+                protein_sequence = self.get_protein_sequence(protein_id)
+                
+                if protein_sequence is None:
+                    # Could not find the sequence, use placeholder positions
+                    start, end = 1, len(clean_peptide)
+                else:
+                    # Find the peptide position in the protein
+                    start, end = self.find_peptide_position(peptide, protein_sequence)
+                    
+                    if start == -1:
+                        # Peptide not found in the sequence, use placeholder positions
+                        start, end = 1, len(clean_peptide)
+                
+                # Add an entry for each sample where the peptide was detected
+                for i, col in enumerate(self.intensity_cols):
+                    intensity = row[col]
+                    if intensity &gt; intensity_threshold:
+                        formatted_rows.append({
+                            &#39;Peptide&#39;: peptide,
+                            &#39;CleanPeptide&#39;: clean_peptide,  # Store the clean peptide too
+                            &#39;Protein&#39;: protein_id,
+                            &#39;Start&#39;: start,
+                            &#39;End&#39;: end,
+                            &#39;Intensity&#39;: intensity,
+                            &#39;Sample&#39;: sample_names[i],
+                            &#39;Length&#39;: len(clean_peptide)  # Use clean peptide length
+                        })
+        
+        # Create the formatted DataFrame
+        self.peptide_df = pd.DataFrame(formatted_rows)
+        
+        console.log(f&#34;Created formatted data with {len(self.peptide_df)} peptide-protein-sample combinations&#34;, style=&#34;bold green&#34;)
+        console.log(f&#34;PTMs were removed for position finding. Original peptides preserved in &#39;Peptide&#39; column, clean versions in &#39;CleanPeptide&#39; column.&#34;, style=&#34;bold yellow&#34;)
+        
+        return self.peptide_df
+    
+    def get_protein_sequence(self, protein_id: str) -&gt; Optional[str]:
+        &#34;&#34;&#34;
+        Get the sequence for a protein ID, trying different matching strategies.
+        
+        Parameters:
+        -----------
+        protein_id : str
+            Protein ID to look up
+            
+        Returns:
+        --------
+        Optional[str]: Protein sequence if found, None otherwise
+        &#34;&#34;&#34;
+        # Direct match
+        if protein_id in self.protein_sequences:
+            return self.protein_sequences[protein_id]
+            
+        # Try to match as a substring of FASTA headers
+        for header, sequence in self.protein_sequences.items():
+            if protein_id in header:
+                return sequence
+                
+        return None
+    
+    def create_immunoviz_object(self) -&gt; &#39;ImmunoViz&#39;:
+        &#34;&#34;&#34;
+        Create an ImmunoViz object from the processed data.
+        
+        Returns:
+        --------
+        ImmunoViz: ImmunoViz object ready for visualization
+        &#34;&#34;&#34;
+        if self.peptide_df is None:
+            raise ValueError(&#34;Data not formatted. Call filter_and_format_data() first.&#34;)
+            
+        # Import ImmunoViz here to avoid circular imports
+        try:
+            # Assuming ImmunoViz is defined elsewhere or imported
+            from ProtPeptigram.viz import ImmunoViz
+            # Use a dataframe with just the columns ImmunoViz expects
+            immunoviz_df = self.peptide_df[[&#39;Peptide&#39;, &#39;Protein&#39;, &#39;Start&#39;, &#39;End&#39;, &#39;Intensity&#39;, &#39;Sample&#39;, &#39;Length&#39;]].copy()
+            return ImmunoViz(immunoviz_df)
+        except ImportError:
+            console.log(&#34;Warning: ImmunoViz class not found. Make sure it&#39;s properly imported.&#34;, style=&#34;bold yellow&#34;)
+            return None
+    
+    def get_unique_proteins(self) -&gt; List[str]:
+        &#34;&#34;&#34;
+        Get the list of unique proteins in the processed data.
+        
+        Returns:
+        --------
+        List[str]: List of unique protein IDs
+        &#34;&#34;&#34;
+        if self.peptide_df is None:
+            raise ValueError(&#34;Data not formatted. Call filter_and_format_data() first.&#34;)
+            
+        return sorted(self.peptide_df[&#39;Protein&#39;].unique())
+    
+    def get_unique_samples(self) -&gt; List[str]:
+        &#34;&#34;&#34;
+        Get the list of unique samples in the processed data.
+        
+        Returns:
+        --------
+        List[str]: List of unique sample names
+        &#34;&#34;&#34;
+        if self.peptide_df is None:
+            raise ValueError(&#34;Data not formatted. Call filter_and_format_data() first.&#34;)
+            
+        return sorted(self.peptide_df[&#39;Sample&#39;].unique())
+    
+    def save_formatted_data(self, output_file: str) -&gt; None:
+        &#34;&#34;&#34;
+        Save the formatted data to a CSV file.
+        
+        Parameters:
+        -----------
+        output_file : str
+            Path to the output CSV file
+        &#34;&#34;&#34;
+        if self.peptide_df is None:
+            raise ValueError(&#34;Data not formatted. Call filter_and_format_data() first.&#34;)
+            
+        self.peptide_df.to_csv(output_file, index=False)
+        console.log(f&#34;Saved formatted data to {output_file}&#34;, style=&#34;bold green&#34;)
+
+
+# Example of how to use the updated class
+# if __name__ == &#34;__main__&#34;:
+    # Test the PTM removal function
+    # processor = PeptideDataProcessor()
+    # test_peptide = &#34;IVS(+15.99)Y(+15.99)YDDIANSEENPTPG&#34;
+    # clean_peptide = processor.remove_ptm(test_peptide)
+    # console.print(f&#34;Original peptide: {test_peptide}&#34;)
+    # print(f&#34;Clean peptide: {clean_peptide}&#34;)
+    
+    # Full example would need real data files
+    # processor = PeptideDataProcessor(&#34;../data/JCI146771_Mouse_peptides_peaks_online.csv&#34;, &#34;../data/uniprotkb_proteome_UP000000589_AND_revi_2025_03_12.fasta&#34;)
+    # processor.filter_and_format_data()
+    # viz = processor.create_immunoviz_object()</code></pre>
+</details>
+<div class="desc"><p>Process peptide data from PEAKS Online output for visualization with ImmunoViz.</p>
+<p>This class handles:
+1. Loading and parsing PEAKS output CSV files
+2. Filtering contaminants and iRT peptides
+3. Extracting protein IDs from Accession column
+4. Mapping peptides to protein sequences to determine start/end positions
+5. Formatting data for ImmunoViz visualization</p>
+<p>Initialize the PeptideDataProcessor.</p>
+<h2 id="parameters">Parameters:</h2>
+<p>peaks_file : str, optional
+Path to the PEAKS output CSV file
+fasta_file : str, optional
+Path to the FASTA file containing protein sequences
+contaminant_keywords : List[str], optional
+List of keywords to identify contaminant proteins
+sample_prefix : str, optional
+Prefix for sample intensity columns (default: "Intensity_")</p></div>
+<h3>Methods</h3>
+<dl>
+<dt id="ProtPeptigram.DataProcessor.PeptideDataProcessor.create_immunoviz_object"><code class="name flex">
+<span>def <span class="ident">create_immunoviz_object</span></span>(<span>self) ‑> ImmunoViz</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_immunoviz_object(self) -&gt; &#39;ImmunoViz&#39;:
+    &#34;&#34;&#34;
+    Create an ImmunoViz object from the processed data.
+    
+    Returns:
+    --------
+    ImmunoViz: ImmunoViz object ready for visualization
+    &#34;&#34;&#34;
+    if self.peptide_df is None:
+        raise ValueError(&#34;Data not formatted. Call filter_and_format_data() first.&#34;)
+        
+    # Import ImmunoViz here to avoid circular imports
+    try:
+        # Assuming ImmunoViz is defined elsewhere or imported
+        from ProtPeptigram.viz import ImmunoViz
+        # Use a dataframe with just the columns ImmunoViz expects
+        immunoviz_df = self.peptide_df[[&#39;Peptide&#39;, &#39;Protein&#39;, &#39;Start&#39;, &#39;End&#39;, &#39;Intensity&#39;, &#39;Sample&#39;, &#39;Length&#39;]].copy()
+        return ImmunoViz(immunoviz_df)
+    except ImportError:
+        console.log(&#34;Warning: ImmunoViz class not found. Make sure it&#39;s properly imported.&#34;, style=&#34;bold yellow&#34;)
+        return None</code></pre>
+</details>
+<div class="desc"><p>Create an ImmunoViz object from the processed data.</p>
+<h2 id="returns">Returns:</h2>
+<p>ImmunoViz: ImmunoViz object ready for visualization</p></div>
+</dd>
+<dt id="ProtPeptigram.DataProcessor.PeptideDataProcessor.extract_protein_ids"><code class="name flex">
+<span>def <span class="ident">extract_protein_ids</span></span>(<span>self, accession_value: str) ‑> List[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_protein_ids(self, accession_value: str) -&gt; List[str]:
+    &#34;&#34;&#34;
+    Extract protein IDs from an accession value, which may contain multiple IDs.
+    
+    Parameters:
+    -----------
+    accession_value : str
+        Accession value from the PEAKS output
+        
+    Returns:
+    --------
+    List[str]: List of protein IDs
+    &#34;&#34;&#34;
+    if pd.isna(accession_value) or accession_value == &#34;&#34;:
+        return []
+        
+    # Split by common delimiters
+    protein_ids = re.split(r&#39;[,:;|/\s]+&#39;, accession_value)
+    
+    # Remove empty entries and trim whitespace
+    protein_ids = [pid.strip() for pid in protein_ids if pid.strip()]
+    
+    return protein_ids</code></pre>
+</details>
+<div class="desc"><p>Extract protein IDs from an accession value, which may contain multiple IDs.</p>
+<h2 id="parameters">Parameters:</h2>
+<p>accession_value : str
+Accession value from the PEAKS output</p>
+<h2 id="returns">Returns:</h2>
+<p>List[str]: List of protein IDs</p></div>
+</dd>
+<dt id="ProtPeptigram.DataProcessor.PeptideDataProcessor.filter_and_format_data"><code class="name flex">
+<span>def <span class="ident">filter_and_format_data</span></span>(<span>self,<br>filter_contaminants: bool = True,<br>intensity_threshold: float = 0.0,<br>min_samples: int = 1) ‑> pandas.core.frame.DataFrame</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def filter_and_format_data(self, 
+                           filter_contaminants: bool = True, 
+                           intensity_threshold: float = 0.0,
+                           min_samples: int = 1) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Filter and format the PEAKS data for ImmunoViz.
+    
+    Parameters:
+    -----------
+    filter_contaminants : bool, optional
+        Whether to filter out contaminants (default: True)
+    intensity_threshold : float, optional
+        Minimum intensity threshold (default: 0.0)
+    min_samples : int, optional
+        Minimum number of samples a peptide must be detected in (default: 1)
+        
+    Returns:
+    --------
+    pd.DataFrame: Formatted data for ImmunoViz
+    &#34;&#34;&#34;
+    if self.peaks_data is None:
+        raise ValueError(&#34;PEAKS data not loaded. Call load_peaks_data() first.&#34;)
+        
+    if not self.intensity_cols:
+        raise ValueError(f&#34;No intensity columns found with prefix &#39;{self.sample_prefix}&#39;&#34;)
+        
+    # Make a copy to avoid modifying the original data
+    data = self.peaks_data.copy()
+    
+    # Capitalize the first letter of all column names
+    #data.columns = [col.capitalize() for col in data.columns]
+    
+    # Filter out contaminants
+    if filter_contaminants:
+        initial_count = len(data)
+        data = data[~data[&#39;Accession&#39;].apply(self.is_contaminant)]
+        console.log(f&#34;Removed {initial_count - len(data)} contaminant entries&#34;, style=&#34;bold green&#34;)
+    
+    # Filter by intensity threshold and minimum samples
+    if intensity_threshold &gt; 0 or min_samples &gt; 1:
+        # Count how many samples have intensity above threshold for each peptide
+        # detection_counts = (data[self.intensity_cols] &gt; intensity_threshold).sum(axis=1)
+        # Use apply to count the number of samples above the threshold for each peptide in each sample instead of sum of all samples
+        detection_counts = (data[self.intensity_cols] &gt; intensity_threshold).apply(lambda x: sum(x &gt;= intensity_threshold), axis=1)
+        initial_count = len(data)
+        data = data[detection_counts &gt;= min_samples]
+        console.log(f&#34;Removed {initial_count - len(data)} entries below intensity threshold of {intensity_threshold} or minimum sample count of {min_samples}&#34;, style=&#34;bold green&#34;)
+    
+    # Prepare the formatted data for ImmunoViz
+    formatted_rows = []
+    
+    # Extract sample names from intensity columns
+    sample_names = [col.replace(self.sample_prefix, &#39;&#39;) for col in self.intensity_cols]
+    
+    # Process each peptide
+    for _, row in data.iterrows():
+        peptide = row[&#39;Peptide&#39;]
+        # Get clean peptide for length calculation
+        clean_peptide = self.remove_ptm(peptide)
+        
+        # Get all protein IDs for this peptide
+        protein_ids = self.extract_protein_ids(row[&#39;Accession&#39;])
+        
+        if not protein_ids:
+            continue
+            
+        # Process each protein ID
+        for protein_id in protein_ids:
+            # Find the protein sequence
+            protein_sequence = self.get_protein_sequence(protein_id)
+            
+            if protein_sequence is None:
+                # Could not find the sequence, use placeholder positions
+                start, end = 1, len(clean_peptide)
+            else:
+                # Find the peptide position in the protein
+                start, end = self.find_peptide_position(peptide, protein_sequence)
+                
+                if start == -1:
+                    # Peptide not found in the sequence, use placeholder positions
+                    start, end = 1, len(clean_peptide)
+            
+            # Add an entry for each sample where the peptide was detected
+            for i, col in enumerate(self.intensity_cols):
+                intensity = row[col]
+                if intensity &gt; intensity_threshold:
+                    formatted_rows.append({
+                        &#39;Peptide&#39;: peptide,
+                        &#39;CleanPeptide&#39;: clean_peptide,  # Store the clean peptide too
+                        &#39;Protein&#39;: protein_id,
+                        &#39;Start&#39;: start,
+                        &#39;End&#39;: end,
+                        &#39;Intensity&#39;: intensity,
+                        &#39;Sample&#39;: sample_names[i],
+                        &#39;Length&#39;: len(clean_peptide)  # Use clean peptide length
+                    })
+    
+    # Create the formatted DataFrame
+    self.peptide_df = pd.DataFrame(formatted_rows)
+    
+    console.log(f&#34;Created formatted data with {len(self.peptide_df)} peptide-protein-sample combinations&#34;, style=&#34;bold green&#34;)
+    console.log(f&#34;PTMs were removed for position finding. Original peptides preserved in &#39;Peptide&#39; column, clean versions in &#39;CleanPeptide&#39; column.&#34;, style=&#34;bold yellow&#34;)
+    
+    return self.peptide_df</code></pre>
+</details>
+<div class="desc"><p>Filter and format the PEAKS data for ImmunoViz.</p>
+<h2 id="parameters">Parameters:</h2>
+<p>filter_contaminants : bool, optional
+Whether to filter out contaminants (default: True)
+intensity_threshold : float, optional
+Minimum intensity threshold (default: 0.0)
+min_samples : int, optional
+Minimum number of samples a peptide must be detected in (default: 1)</p>
+<h2 id="returns">Returns:</h2>
+<p>pd.DataFrame: Formatted data for ImmunoViz</p></div>
+</dd>
+<dt id="ProtPeptigram.DataProcessor.PeptideDataProcessor.find_peptide_position"><code class="name flex">
+<span>def <span class="ident">find_peptide_position</span></span>(<span>self, peptide: str, protein_sequence: str) ‑> Tuple[int, int]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def find_peptide_position(self, peptide: str, protein_sequence: str) -&gt; Tuple[int, int]:
+    &#34;&#34;&#34;
+    Find the start and end positions of a peptide in a protein sequence.
+    Automatically removes PTMs before searching.
+    
+    Parameters:
+    -----------
+    peptide : str
+        Peptide sequence (may contain PTMs)
+    protein_sequence : str
+        Protein sequence
+            
+    Returns:
+    --------
+    Tuple[int, int]: (start, end) positions (1-based indexing)
+    &#34;&#34;&#34;
+    # Remove PTMs from the peptide sequence
+    clean_peptide = self.remove_ptm(peptide)
+    
+    # Find the peptide in the protein sequence
+    start_pos = protein_sequence.find(clean_peptide)
+    
+    if start_pos == -1:
+        return (-1, -1)
+        
+    end_pos = start_pos + len(clean_peptide)
+    
+    # Convert to 1-based indexing
+    return (start_pos + 1, end_pos)</code></pre>
+</details>
+<div class="desc"><p>Find the start and end positions of a peptide in a protein sequence.
+Automatically removes PTMs before searching.</p>
+<h2 id="parameters">Parameters:</h2>
+<p>peptide : str
+Peptide sequence (may contain PTMs)
+protein_sequence : str
+Protein sequence</p>
+<h2 id="returns">Returns:</h2>
+<p>Tuple[int, int]: (start, end) positions (1-based indexing)</p></div>
+</dd>
+<dt id="ProtPeptigram.DataProcessor.PeptideDataProcessor.get_protein_sequence"><code class="name flex">
+<span>def <span class="ident">get_protein_sequence</span></span>(<span>self, protein_id: str) ‑> str | None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_protein_sequence(self, protein_id: str) -&gt; Optional[str]:
+    &#34;&#34;&#34;
+    Get the sequence for a protein ID, trying different matching strategies.
+    
+    Parameters:
+    -----------
+    protein_id : str
+        Protein ID to look up
+        
+    Returns:
+    --------
+    Optional[str]: Protein sequence if found, None otherwise
+    &#34;&#34;&#34;
+    # Direct match
+    if protein_id in self.protein_sequences:
+        return self.protein_sequences[protein_id]
+        
+    # Try to match as a substring of FASTA headers
+    for header, sequence in self.protein_sequences.items():
+        if protein_id in header:
+            return sequence
+            
+    return None</code></pre>
+</details>
+<div class="desc"><p>Get the sequence for a protein ID, trying different matching strategies.</p>
+<h2 id="parameters">Parameters:</h2>
+<p>protein_id : str
+Protein ID to look up</p>
+<h2 id="returns">Returns:</h2>
+<p>Optional[str]: Protein sequence if found, None otherwise</p></div>
+</dd>
+<dt id="ProtPeptigram.DataProcessor.PeptideDataProcessor.get_unique_proteins"><code class="name flex">
+<span>def <span class="ident">get_unique_proteins</span></span>(<span>self) ‑> List[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_unique_proteins(self) -&gt; List[str]:
+    &#34;&#34;&#34;
+    Get the list of unique proteins in the processed data.
+    
+    Returns:
+    --------
+    List[str]: List of unique protein IDs
+    &#34;&#34;&#34;
+    if self.peptide_df is None:
+        raise ValueError(&#34;Data not formatted. Call filter_and_format_data() first.&#34;)
+        
+    return sorted(self.peptide_df[&#39;Protein&#39;].unique())</code></pre>
+</details>
+<div class="desc"><p>Get the list of unique proteins in the processed data.</p>
+<h2 id="returns">Returns:</h2>
+<p>List[str]: List of unique protein IDs</p></div>
+</dd>
+<dt id="ProtPeptigram.DataProcessor.PeptideDataProcessor.get_unique_samples"><code class="name flex">
+<span>def <span class="ident">get_unique_samples</span></span>(<span>self) ‑> List[str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_unique_samples(self) -&gt; List[str]:
+    &#34;&#34;&#34;
+    Get the list of unique samples in the processed data.
+    
+    Returns:
+    --------
+    List[str]: List of unique sample names
+    &#34;&#34;&#34;
+    if self.peptide_df is None:
+        raise ValueError(&#34;Data not formatted. Call filter_and_format_data() first.&#34;)
+        
+    return sorted(self.peptide_df[&#39;Sample&#39;].unique())</code></pre>
+</details>
+<div class="desc"><p>Get the list of unique samples in the processed data.</p>
+<h2 id="returns">Returns:</h2>
+<p>List[str]: List of unique sample names</p></div>
+</dd>
+<dt id="ProtPeptigram.DataProcessor.PeptideDataProcessor.is_contaminant"><code class="name flex">
+<span>def <span class="ident">is_contaminant</span></span>(<span>self, accession: str) ‑> bool</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_contaminant(self, accession: str) -&gt; bool:
+    &#34;&#34;&#34;
+    Check if a protein accession belongs to a contaminant.
+    
+    Parameters:
+    -----------
+    accession : str
+        Protein accession to check
+        
+    Returns:
+    --------
+    bool: True if the accession is a contaminant, False otherwise
+    &#34;&#34;&#34;
+    if pd.isna(accession) or accession == &#34;&#34;:
+        return True
+        
+    for keyword in self.contaminant_keywords:
+        if keyword.lower() in accession.lower():
+            return True
+    return False</code></pre>
+</details>
+<div class="desc"><p>Check if a protein accession belongs to a contaminant.</p>
+<h2 id="parameters">Parameters:</h2>
+<p>accession : str
+Protein accession to check</p>
+<h2 id="returns">Returns:</h2>
+<p>bool: True if the accession is a contaminant, False otherwise</p></div>
+</dd>
+<dt id="ProtPeptigram.DataProcessor.PeptideDataProcessor.load_peaks_data"><code class="name flex">
+<span>def <span class="ident">load_peaks_data</span></span>(<span>self, file_path: str) ‑> pandas.core.frame.DataFrame</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_peaks_data(self, file_path: str) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;
+    Load peptide data from PEAKS output CSV file.
+    
+    Parameters:
+    -----------
+    file_path : str
+        Path to the PEAKS output CSV file
+        
+    Returns:
+    --------
+    pd.DataFrame: Loaded data
+    &#34;&#34;&#34;
+    try:
+        self.peaks_data = pd.read_csv(file_path)
+        console.log(f&#34;Loaded {len(self.peaks_data)} peptide entries from {file_path}&#34;, style=&#34;bold green&#34;)
+        
+        # Check required columns
+        required_cols = [&#39;Peptide&#39;, &#39;Accession&#39;]
+        missing_cols = [col for col in required_cols if col not in self.peaks_data.columns]
+        
+        if missing_cols:
+            raise ValueError(f&#34;Missing required columns: {&#39;, &#39;.join(missing_cols)}&#34;)
+        
+        # Find intensity columns
+        self.intensity_cols = [col for col in self.peaks_data.columns if col.startswith(self.sample_prefix)]
+        
+        if not self.intensity_cols:
+            console.log(f&#34;Warning: No columns with prefix &#39;{self.sample_prefix}&#39; found.&#34;, style=&#34;bold yellow&#34;)
+        else:
+            console.log(f&#34;Found {len(self.intensity_cols)} intensity columns: {&#39;, &#39;.join(self.intensity_cols)}&#34;, style=&#34;bold green&#34;)
+            
+        return self.peaks_data
+        
+    except Exception as e:
+        console.log(f&#34;Error loading PEAKS data: {str(e)}&#34;, style=&#34;bold red&#34;)
+        raise</code></pre>
+</details>
+<div class="desc"><p>Load peptide data from PEAKS output CSV file.</p>
+<h2 id="parameters">Parameters:</h2>
+<p>file_path : str
+Path to the PEAKS output CSV file</p>
+<h2 id="returns">Returns:</h2>
+<p>pd.DataFrame: Loaded data</p></div>
+</dd>
+<dt id="ProtPeptigram.DataProcessor.PeptideDataProcessor.load_protein_sequences"><code class="name flex">
+<span>def <span class="ident">load_protein_sequences</span></span>(<span>self, fasta_path: str) ‑> Dict[str, str]</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_protein_sequences(self, fasta_path: str) -&gt; Dict[str, str]:
+    &#34;&#34;&#34;
+    Load protein sequences from a FASTA file.
+    
+    Parameters:
+    -----------
+    fasta_path : str
+        Path to the FASTA file
+        
+    Returns:
+    --------
+    Dict[str, str]: Dictionary mapping protein IDs to sequences
+    &#34;&#34;&#34;
+    try:
+        # Parse the FASTA file
+        for record in SeqIO.parse(fasta_path, &#34;fasta&#34;):
+            # Extract the protein ID from the FASTA header
+            protein_id = record.id
+            # Store the sequence
+            self.protein_sequences[protein_id] = str(record.seq)
+            
+            # Also store with description for more flexible matching
+            self.protein_sequences[record.description] = str(record.seq)
+        
+        console.log(f&#34;Loaded {len(self.protein_sequences)} protein sequences from {fasta_path}&#34;, style=&#34;bold green&#34;)
+        return self.protein_sequences
+        
+    except Exception as e:
+        console.log(f&#34;Error loading protein sequences: {str(e)}&#34;, style=&#34;bold red&#34;)
+        raise</code></pre>
+</details>
+<div class="desc"><p>Load protein sequences from a FASTA file.</p>
+<h2 id="parameters">Parameters:</h2>
+<p>fasta_path : str
+Path to the FASTA file</p>
+<h2 id="returns">Returns:</h2>
+<p>Dict[str, str]: Dictionary mapping protein IDs to sequences</p></div>
+</dd>
+<dt id="ProtPeptigram.DataProcessor.PeptideDataProcessor.remove_ptm"><code class="name flex">
+<span>def <span class="ident">remove_ptm</span></span>(<span>self, peptide: str) ‑> str</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_ptm(self, peptide: str) -&gt; str:
+    &#34;&#34;&#34;
+    Remove post-translational modifications (PTMs) from peptide sequences.
+    Handles modifications like M(+15.99) and other mass shift notations.
+    
+    Parameters:
+    -----------
+    peptide : str
+        Peptide sequence with PTM annotations
+        
+    Returns:
+    --------
+    str: Clean peptide sequence without PTM annotations
+    &#34;&#34;&#34;
+    if peptide is None or pd.isna(peptide):
+        return &#34;&#34;
+        
+    # Regular expression to match PTM patterns like M(+15.99)
+    # Matches any character followed by parentheses containing +/- and numbers
+    ptm_pattern = r&#39;([A-Z])\([+\-][0-9.]+\)&#39;
+    
+    # Replace each match with just the amino acid
+    clean_peptide = re.sub(ptm_pattern, r&#39;\1&#39;, peptide)
+    
+    return clean_peptide</code></pre>
+</details>
+<div class="desc"><p>Remove post-translational modifications (PTMs) from peptide sequences.
+Handles modifications like M(+15.99) and other mass shift notations.</p>
+<h2 id="parameters">Parameters:</h2>
+<p>peptide : str
+Peptide sequence with PTM annotations</p>
+<h2 id="returns">Returns:</h2>
+<p>str: Clean peptide sequence without PTM annotations</p></div>
+</dd>
+<dt id="ProtPeptigram.DataProcessor.PeptideDataProcessor.save_formatted_data"><code class="name flex">
+<span>def <span class="ident">save_formatted_data</span></span>(<span>self, output_file: str) ‑> None</span>
+</code></dt>
+<dd>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_formatted_data(self, output_file: str) -&gt; None:
+    &#34;&#34;&#34;
+    Save the formatted data to a CSV file.
+    
+    Parameters:
+    -----------
+    output_file : str
+        Path to the output CSV file
+    &#34;&#34;&#34;
+    if self.peptide_df is None:
+        raise ValueError(&#34;Data not formatted. Call filter_and_format_data() first.&#34;)
+        
+    self.peptide_df.to_csv(output_file, index=False)
+    console.log(f&#34;Saved formatted data to {output_file}&#34;, style=&#34;bold green&#34;)</code></pre>
+</details>
+<div class="desc"><p>Save the formatted data to a CSV file.</p>
+<h2 id="parameters">Parameters:</h2>
+<p>output_file : str
+Path to the output CSV file</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="ProtPeptigram" href="index.html">ProtPeptigram</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="ProtPeptigram.DataProcessor.PeptideDataProcessor" href="#ProtPeptigram.DataProcessor.PeptideDataProcessor">PeptideDataProcessor</a></code></h4>
+<ul class="">
+<li><code><a title="ProtPeptigram.DataProcessor.PeptideDataProcessor.create_immunoviz_object" href="#ProtPeptigram.DataProcessor.PeptideDataProcessor.create_immunoviz_object">create_immunoviz_object</a></code></li>
+<li><code><a title="ProtPeptigram.DataProcessor.PeptideDataProcessor.extract_protein_ids" href="#ProtPeptigram.DataProcessor.PeptideDataProcessor.extract_protein_ids">extract_protein_ids</a></code></li>
+<li><code><a title="ProtPeptigram.DataProcessor.PeptideDataProcessor.filter_and_format_data" href="#ProtPeptigram.DataProcessor.PeptideDataProcessor.filter_and_format_data">filter_and_format_data</a></code></li>
+<li><code><a title="ProtPeptigram.DataProcessor.PeptideDataProcessor.find_peptide_position" href="#ProtPeptigram.DataProcessor.PeptideDataProcessor.find_peptide_position">find_peptide_position</a></code></li>
+<li><code><a title="ProtPeptigram.DataProcessor.PeptideDataProcessor.get_protein_sequence" href="#ProtPeptigram.DataProcessor.PeptideDataProcessor.get_protein_sequence">get_protein_sequence</a></code></li>
+<li><code><a title="ProtPeptigram.DataProcessor.PeptideDataProcessor.get_unique_proteins" href="#ProtPeptigram.DataProcessor.PeptideDataProcessor.get_unique_proteins">get_unique_proteins</a></code></li>
+<li><code><a title="ProtPeptigram.DataProcessor.PeptideDataProcessor.get_unique_samples" href="#ProtPeptigram.DataProcessor.PeptideDataProcessor.get_unique_samples">get_unique_samples</a></code></li>
+<li><code><a title="ProtPeptigram.DataProcessor.PeptideDataProcessor.is_contaminant" href="#ProtPeptigram.DataProcessor.PeptideDataProcessor.is_contaminant">is_contaminant</a></code></li>
+<li><code><a title="ProtPeptigram.DataProcessor.PeptideDataProcessor.load_peaks_data" href="#ProtPeptigram.DataProcessor.PeptideDataProcessor.load_peaks_data">load_peaks_data</a></code></li>
+<li><code><a title="ProtPeptigram.DataProcessor.PeptideDataProcessor.load_protein_sequences" href="#ProtPeptigram.DataProcessor.PeptideDataProcessor.load_protein_sequences">load_protein_sequences</a></code></li>
+<li><code><a title="ProtPeptigram.DataProcessor.PeptideDataProcessor.remove_ptm" href="#ProtPeptigram.DataProcessor.PeptideDataProcessor.remove_ptm">remove_ptm</a></code></li>
+<li><code><a title="ProtPeptigram.DataProcessor.PeptideDataProcessor.save_formatted_data" href="#ProtPeptigram.DataProcessor.PeptideDataProcessor.save_formatted_data">save_formatted_data</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.6</a>.</p>
+</footer>
+</body>
+</html>
