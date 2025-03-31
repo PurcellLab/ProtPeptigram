@@ -48,6 +48,8 @@ class ImmunoViz:
         color_by: str = 'protein',
         figsize: Tuple[int, int] = (12, 10),
         title: Optional[str] = None,
+        x_lab_forntsize: int = 12,
+        y_lab_forntsize: int = 12,
         annotate: bool = True,
         min_intensity: Optional[float] = None,
         highlight_regions: Optional[List[Tuple[int, int]]] = None,
@@ -81,6 +83,10 @@ class ImmunoViz:
             Figure size (width, height) in inches (default: (12, 10))
         title : str, optional
             Title for the plot (default: "Protein Peptide Coverage")
+        x_lab_forntsize : int, optional
+            Font size for x-axis labels Amino acid positions(default: 12)
+        y_lab_forntsize : int, optional
+            Font size for y-axis labels Sample names and Density plot(default: 12)
         annotate : bool, optional
             Whether to annotate proteins (default: True)
         min_intensity : float, optional
@@ -343,7 +349,7 @@ class ImmunoViz:
         # Styling for the top panel
         axs[0].set_xlim(xlim)
         axs[0].set_ylabel('Density', color=text_color,
-                          fontweight='normal', fontsize=14)
+                          fontweight='normal', fontsize=y_lab_forntsize)
         axs[0].spines['top'].set_visible(False)
         axs[0].spines['right'].set_visible(False)
         # Remove all ticks
@@ -555,7 +561,7 @@ class ImmunoViz:
 
             # Add styled group label - ensure it's visible and consistent
             ax.set_ylabel(group, fontweight='normal',
-                          color=text_color, fontsize=14)
+                          color=text_color, fontsize=y_lab_forntsize)
             ax.set_yticks([])
             ax.spines['top'].set_visible(False)
             ax.spines['right'].set_visible(False)
@@ -628,7 +634,7 @@ class ImmunoViz:
 
         # Set x-label on the bottom axis only
         axs[-1].set_xlabel('Amino Acid Position',
-                           fontweight='normal', color=text_color, fontsize=10)
+                           fontweight='normal', color=text_color, fontsize=x_lab_forntsize)
 
         # Add intensity colorbars for each protein if using protein+intensity
         if color_by_protein_and_intensity and external_legend:
