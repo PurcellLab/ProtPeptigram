@@ -186,3 +186,6 @@ dev-notes*
 
 #Ignore new testing examples
 examples/new_test_examples/*
+
+# Ignore new tools examples
+examples/new_tools/
