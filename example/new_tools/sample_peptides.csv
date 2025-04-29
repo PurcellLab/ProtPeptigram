@@ -1,0 +1,11 @@
+peptides,Source,HLA types,Section
+STFIYNSM,Gbp6,HLA-DQA1*05:01,IEDB - Epitopes
+CLQPPDGGT,Iqcj-Schip1,HLA-B*07:02,IEDB - Epitopes
+PLGSTVQSQTKGIWM,Gbp6,HLA-DQB1*02:01,IEDB - Ligand
+SDDYLENAL,Gbp6,HLA-A*02:01,Current - Ligand
+SARVKDSG,Fcgr4,HLA-DQA1*05:01,Current - Ligand
+HPQLPQLPS,Auts2,HLA-A*02:01,IEDB - Epitopes
+LPERDGHSHEGRAAG,Auts2,HLA-B*07:02,IEDB - Ligand
+SGSDKDSDAD,Iqcj-Schip1,HLA-A*02:01,Current - Ligand
+CVRAVLERP,Arrdc4,HLA-B*35:01,Current - Ligand
+HNDSGSYFCRGL,Fcgr4,HLA-DRB1*01:01,IEDB - Epitopes

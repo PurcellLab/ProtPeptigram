@@ -183,3 +183,6 @@ data/out/*
 
 #ignore dev notes
 dev-notes*
+
+#Ignore new testing examples
+examples/new_test_examples/*

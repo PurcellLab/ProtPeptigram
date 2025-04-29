@@ -436,3 +436,4 @@ class PeptideDataProcessor:
     # processor = PeptideDataProcessor("../data/JCI146771_Mouse_peptides_peaks_online.csv", "../data/uniprotkb_proteome_UP000000589_AND_revi_2025_03_12.fasta")
     # processor.filter_and_format_data()
     # viz = processor.create_immunoviz_object()
+    
