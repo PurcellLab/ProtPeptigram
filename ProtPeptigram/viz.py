@@ -45,7 +45,7 @@ class ImmunoViz:
         protein_ids: Union[str, List[str]],
         groups: List[str] = None,
         group_by: str = 'Sample',
-        color_by: str = 'protein',
+        color_by: str = None,
         figsize: Tuple[int, int] = (12, 10),
         title: Optional[str] = None,
         x_lab_forntsize: int = 12,
@@ -609,6 +609,8 @@ class ImmunoViz:
         coloring_method = ""
         if color_by_protein_and_intensity:
             coloring_method = "Colored by protein and intensity"
+        elif color_by is None:
+            coloring_method = None
         elif color_by == 'intensity':
             coloring_method = "Colored by intensity"
         elif color_by == 'protein':
@@ -617,6 +619,7 @@ class ImmunoViz:
             coloring_method = "Colored by detection count"
         elif color_by == 'length':
             coloring_method = "Colored by peptide length"
+        
 
         if coloring_method:
             y_pos = 0.92 if len(protein_ids) <= 1 else 0.90

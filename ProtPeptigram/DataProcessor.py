@@ -425,15 +425,15 @@ class PeptideDataProcessor:
 
 # Example of how to use the updated class
 # if __name__ == "__main__":
-    # Test the PTM removal function
-    # processor = PeptideDataProcessor()
-    # test_peptide = "IVS(+15.99)Y(+15.99)YDDIANSEENPTPG"
-    # clean_peptide = processor.remove_ptm(test_peptide)
-    # console.print(f"Original peptide: {test_peptide}")
-    # print(f"Clean peptide: {clean_peptide}")
+#     # Test the PTM removal function
+#     processor = PeptideDataProcessor()
+#     test_peptide = "IVS(+15.99)Y(+15.99)YDDIANSEENPTPG"
+#     clean_peptide = processor.remove_ptm(test_peptide)
+#     console.print(f"Original peptide: {test_peptide}")
+#     print(f"Clean peptide: {clean_peptide}")
     
-    # Full example would need real data files
-    # processor = PeptideDataProcessor("../data/JCI146771_Mouse_peptides_peaks_online.csv", "../data/uniprotkb_proteome_UP000000589_AND_revi_2025_03_12.fasta")
-    # processor.filter_and_format_data()
-    # viz = processor.create_immunoviz_object()
+#     # Full example would need real data files
+#     processor = PeptideDataProcessor("../data/JCI146771_Mouse_peptides_peaks_online.csv", "../data/uniprotkb_proteome_UP000000589_AND_revi_2025_03_12.fasta")
+#     processor.filter_and_format_data()
+#     viz = processor.create_immunoviz_object()
     
