@@ -7,7 +7,6 @@ from io import StringIO
 from typing import List, Dict, Union, Optional, Tuple, Set
 from Bio import SeqIO
 
-
 class PeptideDataProcessor:
     """
     Process peptide data from PEAKS Online output for visualization with ImmunoViz.
