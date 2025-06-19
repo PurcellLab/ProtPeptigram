@@ -184,7 +184,7 @@ def run_pipeline(
                 group_by='Sample',
                 color_by='protein',
                 figsize=(14, 12),
-                title=f"Peptide Visualization - {prot}",
+                title=f"Peptide-Protein alignment visualisation - {prot}",
                 color_by_protein_and_intensity=False,
                 intensity_cmaps=["Blues", "Reds", "Greens", "Purples"],
                 protein_cmap="Set1",
