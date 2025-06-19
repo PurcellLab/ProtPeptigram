@@ -5,7 +5,7 @@ import sys
 from multiprocessing import Pool
 from rich.text import Text
 from rich_argparse import RichHelpFormatter
-from ProtPeptigram.logger import CONSOLE
+from ProtPeptigram.logger import CONSOLE as console
 from ProtPeptigram import __author__, __version__
 from ProtPeptigram.runner import run_pipeline
 
@@ -22,7 +22,7 @@ def _welcome():
                                      /_/          /____/                                                                                                                                
     """
 
-    CONSOLE.print(tool_icon, style="blue")
+    console.print(tool_icon, style="blue")
     
 
 
@@ -69,7 +69,7 @@ def _print_credits(credits=False):
     text.append("\n")
     if credits:
         text.stylize("#006cb5")
-    CONSOLE.print(text)
+    console.print(text)
     
 
 def main():
@@ -139,6 +139,14 @@ def main():
     )
     
     parser.add_argument(
+        "-t",
+        "--threads",
+        type=int,
+        default=1,
+        help="Number of threads to use for processing (default: 1)"
+    )
+
+    parser.add_argument(
         "-v",
         "--version",
         action="version",
@@ -158,16 +166,39 @@ def main():
         sys.exit(0)
     
     if args.input and args.fasta:
-        run_pipeline(
-            csv_path=args.input,
-            fasta_path=args.fasta,
-            output_dir=args.output,
-            top=args.top,
-            protein_list=args.protein_list,
-            regex_pattern=args.regex,
-            intensity_threshold=args.threshold,
-            min_samples=args.min_samples
-        )
+        if args.threads > 1:
+            console.log(
+                f"Using {args.threads} threads for processing.",
+                style="bold green"
+            )
+            with Pool(processes=args.threads) as pool:
+                pool.apply_async(
+                    run_pipeline,
+                    args=(
+                        args.input,
+                        args.fasta,
+                        args.output,
+                        args.top,
+                        args.protein_list,
+                        args.regex,
+                        args.threshold,
+                        args.min_samples
+                    )
+                )
+                pool.close()
+                pool.join()
+        else:
+            console.log("Running in single-threaded mode.", style="bold yellow")
+            run_pipeline(
+                args.input,
+                args.fasta,
+                args.output,
+                args.top,
+                args.protein_list,
+                args.regex,
+                args.threshold,
+                args.min_samples
+            )
     else:
         parser.error("Both input CSV file (-i/--input) and FASTA file (-f/--fasta) are required.")
     
