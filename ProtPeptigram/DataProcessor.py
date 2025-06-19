@@ -7,7 +7,6 @@ from io import StringIO
 from typing import List, Dict, Union, Optional, Tuple, Set
 from Bio import SeqIO
 
-
 class PeptideDataProcessor:
     """
     Process peptide data from PEAKS Online output for visualization with ImmunoViz.
@@ -24,7 +23,7 @@ class PeptideDataProcessor:
                  peaks_file: str = None, 
                  fasta_file: str = None,
                  contaminant_keywords: List[str] = None,
-                 sample_prefix: str = "Intensity_"):
+                 sample_prefix:str = "Intensity"): #sample_prefix: str = "Intensity_"):
         """
         Initialize the PeptideDataProcessor.
         
@@ -37,7 +36,7 @@ class PeptideDataProcessor:
         contaminant_keywords : List[str], optional
             List of keywords to identify contaminant proteins
         sample_prefix : str, optional
-            Prefix for sample intensity columns (default: "Intensity_")
+            Prefix for sample intensity columns (default: "Intensity")
         """
         # Set default contaminant keywords if not provided
         if contaminant_keywords is None:
