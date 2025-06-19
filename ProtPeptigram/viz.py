@@ -50,6 +50,9 @@ class ImmunoViz:
         title: Optional[str] = None,
         x_lab_forntsize: int = 12,
         y_lab_forntsize: int = 12,
+        xticks_font: int = 12,
+        xticks_color: str = "#333333",
+        xticks_rotation: int = 0,
         annotate: bool = True,
         min_intensity: Optional[float] = None,
         highlight_regions: Optional[List[Tuple[int, int]]] = None,
@@ -65,7 +68,7 @@ class ImmunoViz:
         highlight_alpha: float = 0.25,
         highlight_color: str = "#FF8888",
         dpi: int = 300
-    ):
+    ) -> Tuple[plt.Figure, List[plt.Axes]]:
         """
         Create a PeptiGram visualization with protein-based coloring.
 
@@ -87,6 +90,12 @@ class ImmunoViz:
             Font size for x-axis labels Amino acid positions(default: 12)
         y_lab_forntsize : int, optional
             Font size for y-axis labels Sample names and Density plot(default: 12)
+        xticks_font : int, optional
+            Font size for x-axis tick labels (default: 12)
+        xticks_color : str, optional
+            Color for x-axis tick labels (default: "#333333")
+        x_ticks_rotation : int, optional
+            Rotation angle for x-axis tick labels (default: 0)
         annotate : bool, optional
             Whether to annotate proteins (default: True)
         min_intensity : float, optional
@@ -315,7 +324,7 @@ class ImmunoViz:
             # Get color for this protein
             protein_color = protein_to_color[protein_id]
 
-            # Plot density with publication-quality styling
+            # Plot density with high quality styling
             axs[0].bar(positions, density, color=protein_color, alpha=0.75, width=1,
                        label=protein_id, edgecolor=None, linewidth=0)
 
@@ -537,7 +546,7 @@ class ImmunoViz:
                     space_needed = spaces[height, space_start:space_end+1]
                     if np.sum(space_needed) == 0:  # Space is available
                         spaces[height, space_start:space_end+1] = 1
-                        # Publication-quality peptide visualization
+                        #peptide visualization
                         ax.plot(
                             [start, end],
                             [-height-0.4, -height-0.4],
@@ -586,7 +595,6 @@ class ImmunoViz:
                                linestyle='-', alpha=0.3, linewidth=0.8)
                     ax.axvline(end, color=highlight_color,
                                linestyle='-', alpha=0.3, linewidth=0.8)
-
         # Set title
         if title is None:
             if len(protein_ids) == 1:
@@ -604,7 +612,7 @@ class ImmunoViz:
                 protein_str = protein_str[:47] + "..."
             plt.figtext(0.5, 0.94, protein_str, ha='center', color=text_color,
                         fontsize=9, fontstyle='italic')
-
+            
         # Add subtitle for coloring method
         coloring_method = ""
         if color_by_protein_and_intensity:
@@ -635,6 +643,16 @@ class ImmunoViz:
             plt.figtext(0.5, y_pos, f"Auto-highlighted regions: {regions_str}",
                         ha='center', fontsize=9, fontstyle='italic', color=highlight_color)
 
+        # Handle x-tick labels for all axes except the last one
+        for i in range(len(axs)):
+            # if i == 0:  # Density plot - keep labels
+            #     continue
+            if i == len(axs) - 1:  # Last plot - keep labels
+                axs[i].tick_params(axis='x', labelsize=xticks_font, rotation=xticks_rotation, labelcolor=xticks_color)
+            else:  # Middle plots - hide labels
+                axs[i].tick_params(axis='x', labelbottom=False)
+        
+        
         # Set x-label on the bottom axis only
         axs[-1].set_xlabel('Amino Acid Position',
                            fontweight='normal', color=text_color, fontsize=x_lab_forntsize)
