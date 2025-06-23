@@ -106,7 +106,6 @@ def run_pipeline(
         Intensity threshold for filtering peptides (default: 0.0)
     min_samples : int, optional
         Minimum number of samples a peptide must be present in (default: 1)
-    
     Returns:
     --------
     tuple: (PeptideDataProcessor, ImmunoViz) - The processor and visualization objects
@@ -187,11 +186,13 @@ def run_pipeline(
                 title=f"Peptide-Protein alignment visualisation - {prot}",
                 color_by_protein_and_intensity=False,
                 intensity_cmaps=["Blues", "Reds", "Greens", "Purples"],
-                protein_cmap="Set1",
+                protein_cmap="Set1", 
                 external_legend=True,
                 highlight=True,
                 auto_highlight=True,
                 highlight_alpha=0.3,
+                use_sample_color_bars=True,
+                sample_bar_width=6,
                 dpi=120
             )
             

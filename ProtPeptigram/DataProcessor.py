@@ -75,14 +75,15 @@ class PeptideDataProcessor:
         try:
             self.peaks_data = pd.read_csv(file_path)
             console.log(f"Loaded {len(self.peaks_data)} peptide entries from {file_path}", style="bold green")
-            
+            self.peaks_data = self.peaks_data.rename(columns=lambda x: str(x).capitalize())
             # Check required columns
             required_cols = ['Peptide', 'Accession']
             missing_cols = [col for col in required_cols if col not in self.peaks_data.columns]
             
             if missing_cols:
                 raise ValueError(f"Missing required columns: {', '.join(missing_cols)}")
-            
+
+                
             # Find intensity columns
             self.intensity_cols = [col for col in self.peaks_data.columns if col.startswith(self.sample_prefix)]
             
@@ -281,7 +282,7 @@ class PeptideDataProcessor:
         formatted_rows = []
         
         # Extract sample names from intensity columns
-        sample_names = [col.replace(self.sample_prefix, '') for col in self.intensity_cols]
+        sample_names = [re.sub(r'^[_\-\*]+', '', col.replace(self.sample_prefix, '')) for col in self.intensity_cols]
         
         # Process each peptide
         for _, row in data.iterrows():

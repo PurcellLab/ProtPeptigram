@@ -48,12 +48,23 @@ class ImmunoViz:
         color_by: str = None,
         figsize: Tuple[int, int] = (12, 10),
         title: Optional[str] = None,
+        y_desnity_forntsize: int = 8,
+        y_desnity_forntcolour: str = "#333333",
+        y_lab_ticksize: int = 8,
+        y_sample_fontsize: int = 8,
+        y_sample_color: Optional[Union[list, str]] = "#333333",
+        max_sample_name_length: int = 15,
+        sample_name_wrap: bool = True,
+        use_sample_color_bars: bool = False,
+        sample_colors: Optional[List[str]] = None,
+        sample_bar_width: float = 0.5,
         x_lab_forntsize: int = 12,
-        y_lab_forntsize: int = 12,
         xticks_font: int = 12,
         xticks_color: str = "#333333",
         xticks_rotation: int = 0,
         annotate: bool = True,
+        legend_titleFontsize: int = 10,
+        legend_fontsize: int = 8,
         min_intensity: Optional[float] = None,
         highlight_regions: Optional[List[Tuple[int, int]]] = None,
         auto_highlight: bool = True,
@@ -61,6 +72,7 @@ class ImmunoViz:
         auto_highlight_threshold: float = 0.8,
         highlight: bool = True,
         color_by_protein_and_intensity: bool = False,
+        colour_by_text: bool = False,
         intensity_color_scale: float = 0.7,
         intensity_cmaps: Union[str, List[str]] = "viridis",
         protein_cmap: str = "tab10",
@@ -86,10 +98,30 @@ class ImmunoViz:
             Figure size (width, height) in inches (default: (12, 10))
         title : str, optional
             Title for the plot (default: "Protein Peptide Coverage")
-        x_lab_forntsize : int, optional
+        x_lab_fontsize : int, optional
             Font size for x-axis labels Amino acid positions(default: 12)
-        y_lab_forntsize : int, optional
-            Font size for y-axis labels Sample names and Density plot(default: 12)
+        y_desnity_forntsize : int, optional
+            Font size for y-axis labels Density plot(default: 8)
+        y_desnity_forntcolour : str, optional   
+            Color for y-axis labels Density plot (default: "#333333")
+        y_sample_color : str
+            Color for y-axis sample names (default: "#333333")
+        y_lab_ticksize : int, optional
+            Font size for y-axis tick labels (default: 8)
+        y_sample_fontsize : int, optional
+            Font size for y-axis sample names (default: 8)
+        max_sample_name_length : int, optional
+            Maximum length for sample names on the y-axis (default: 8)
+        sample_name_wrap : bool, optional
+            Whether to wrap long sample names (default: True)
+        use_sample_color_bars : bool, optional
+            Whether to use colored bars for sample names (default: False)
+        sample_colors : List[str], optional
+            List of colors for sample bars (if None, default colors are used)
+        sample_bar_width : float, optional
+            Width of sample color bars (default: 0.02)
+        x_lab_forntsize : int, optional
+            Font size for x-axis labels (default: 12)
         xticks_font : int, optional
             Font size for x-axis tick labels (default: 12)
         xticks_color : str, optional
@@ -112,6 +144,8 @@ class ImmunoViz:
             Whether to apply highlighting at all (default: True)
         color_by_protein_and_intensity : bool, optional
             Whether to color peptides by both protein and intensity (default: False)
+        colour_by_text : bool, optional
+            Whether to add text indicating the coloring method (default: False)
         intensity_color_scale : float, optional
             How much the intensity should influence the color (0.0-1.0) (default: 0.7)
         intensity_cmaps : str or List[str], optional
@@ -176,7 +210,6 @@ class ImmunoViz:
         plt.rcParams['ytick.direction'] = 'out'
 
         # Set colors and style elements
-        density_color = '#555555'      # Darker gray for density plots
         grid_color = '#e5e5e5'         # Very light gray grid
         separator_color = '#cccccc'    # Light gray separator
         background_color = '#ffffff'   # White background
@@ -357,8 +390,8 @@ class ImmunoViz:
 
         # Styling for the top panel
         axs[0].set_xlim(xlim)
-        axs[0].set_ylabel('Density', color=text_color,
-                          fontweight='normal', fontsize=y_lab_forntsize)
+        axs[0].set_ylabel('Density', color=y_desnity_forntcolour,
+                          fontweight='normal', fontsize=y_desnity_forntsize)
         axs[0].spines['top'].set_visible(False)
         axs[0].spines['right'].set_visible(False)
         # Remove all ticks
@@ -368,7 +401,7 @@ class ImmunoViz:
         max_density = max(all_proteins_density)
         axs[0].set_yticks([0, max_density/2, max_density])
         axs[0].set_yticklabels(
-            [0, f"{max_density/2:.0f}", f"{max_density:.0f}"], fontsize=8, color="lightgray")
+            [0, f"{max_density/2:.0f}", f"{max_density:.0f}"], fontsize=y_lab_ticksize, color="lightgray")
 
         # Create legend in the designated area if external
         if external_legend:
@@ -378,32 +411,29 @@ class ImmunoViz:
                 patch = plt.Line2D(
                     [0], [0], color=protein_to_color[protein_id], lw=4, label=protein_id)
                 legend_handles.append(patch)
-
-            # Add legend to the separate legend axis
-            protein_legend = legend_ax.legend(
-                handles=legend_handles,
-                loc='upper left',
-                fontsize=9,
-                frameon=True,
-                framealpha=0.7,
-                facecolor=background_color,
-                edgecolor=grid_color,
-                title='Proteins',
-                title_fontsize=10
-            )
-
-            # Make sure legend title is properly formatted
-            protein_legend.get_title().set_fontweight('bold')
+                # Add legend to the separate legend axis
+                protein_legend = legend_ax.legend(
+                    handles=legend_handles,
+                    loc='upper left',
+                    fontsize=legend_fontsize,
+                    frameon=True,
+                    framealpha=0.7,
+                    facecolor=background_color,
+                    edgecolor=grid_color,
+                    title='Protein',
+                    title_fontsize=legend_titleFontsize
+                )
+                protein_legend.get_title().set_fontweight('bold')
         else:
             # Create protein legend in the main plot
             protein_legend = axs[0].legend(
                 loc='upper right',
-                fontsize=8,
+                fontsize=legend_fontsize,
                 framealpha=0.7,
                 facecolor=background_color,
                 edgecolor='none',
                 title='Proteins',
-                title_fontsize=9
+                title_fontsize=legend_titleFontsize,
             )
             # Set the font weight of the legend title to normal for a consistent appearance
             protein_legend.get_title().set_fontweight('normal')
@@ -567,10 +597,140 @@ class ImmunoViz:
             # Set plot limits and labels
             ax.set_ylim(-max_height, 0)
             ax.set_xlim(xlim)
+            
+            # Add colored vertical bar for each sample if requested
+            if use_sample_color_bars:
+                if sample_colors is None:
+                    # Generate colors automatically
+                    sample_cmap = plt.cm.get_cmap('tab10')
+                    sample_color = sample_cmap(i % sample_cmap.N)
+                else:
+                    sample_color = sample_colors[i % len(sample_colors)]
+                
+                # Add vertical colored bar on the left
+                bar_x = xlim[0] #-5 # Position slightly left of the plot
+                ax.axvline(bar_x, ymin=0, ymax=1, color=sample_color, 
+                        linewidth=sample_bar_width, alpha=0.8, solid_capstyle='butt')
+                
+                # Remove y-axis label if using color bars
+                ax.set_ylabel('')
+                
+                # Store sample info for legend
+                if i == 0:  # Initialize on first iteration
+                    sample_legend_handles = []
+                
+                # Create legend handle
+                sample_legend_handles.append(
+                    plt.Line2D([0], [0], color=sample_color, lw=4, label=group)
+                )
+                        # Add styled group label - ensure it's visible and consistent
+            elif sample_name_wrap and len(group) > max_sample_name_length:
+                # Calculate wrap width based on max_height
+                # More height = more space = wider wrap width
+                import textwrap
+                
+                # Base wrap width, adjusted by plot height
+                # Higher max_height allows longer lines
+                dynamic_wrap_width = max(8, min(max_sample_name_length, max_height // 2))
+                
+                wrapped_group = '\n'.join(textwrap.wrap(group, width=dynamic_wrap_width))
+                ax.set_ylabel(wrapped_group, fontweight='normal',
+                            color=y_sample_color, fontsize=y_sample_fontsize)
+            
+            else:
+                ax.set_ylabel(group, fontweight='normal',
+                            color=y_sample_color, fontsize=y_sample_fontsize)
+                    # Add subtitle for coloring method
+            coloring_method = ""
+            if color_by_protein_and_intensity:
+                coloring_method = "Colored by protein and intensity"
+            elif color_by is None:
+                coloring_method = None
+            elif color_by == 'intensity':
+                coloring_method = "Colored by intensity"
+            elif color_by == 'protein':
+                coloring_method = "Colored by protein"
+            elif color_by == 'count':
+                coloring_method = "Colored by detection count"
+            elif color_by == 'length':
+                coloring_method = "Colored by peptide length"
+            
 
-            # Add styled group label - ensure it's visible and consistent
-            ax.set_ylabel(group, fontweight='normal',
-                          color=text_color, fontsize=y_lab_forntsize)
+            
+            # Set Sample color bar legend if using sample color bars
+            if use_sample_color_bars and external_legend:
+                # Calculate scaling factor based on plot height
+                height_scale_factor = len(groups) / 6.0  # Normalize to 6 groups as baseline
+                height_scale_factor = max(0.5, min(height_scale_factor, 2.0))  # Clamp between 0.5 and 2.0
+                
+                # Calculate space needed for protein legend, scaled by plot height
+                base_item_height = 1 * height_scale_factor  # Scale item height
+                base_title_padding = 0.06 * height_scale_factor  # Scale title/padding
+                
+                protein_legend_height = len(protein_ids) * base_item_height + base_title_padding
+                
+                # Position sample legend below protein legend with scaled padding
+                padding = 0.3 * height_scale_factor
+                sample_legend_y = 1.0 - protein_legend_height - padding
+                
+                # Ensure sample legend doesn't go below available space
+                # sample_legend_y = max(sample_legend_y, 0.1)
+                
+                # Create sample legend with calculated position
+                sample_legend = legend_ax.legend(
+                    handles=sample_legend_handles,
+                    bbox_to_anchor=(0, sample_legend_y),
+                    loc='upper left',
+                    fontsize=legend_fontsize,
+                    frameon=True,
+                    framealpha=0.7,
+                    facecolor=background_color,
+                    edgecolor=grid_color,
+                    title='Samples',
+                    title_fontsize=legend_titleFontsize
+                )
+                sample_legend.get_title().set_fontweight('bold')
+                
+                # Add the protein legend back (since matplotlib replaces it)
+                legend_ax.add_artist(protein_legend)
+                
+                # Add notes below sample legend
+                sample_items = len(groups)
+                sample_legend_height = sample_items * base_item_height + base_title_padding
+                current_note_y = sample_legend_y - sample_legend_height - 0.03  # Start position for notes
+                
+                # Prepare notes list
+                notes = []
+                
+                # Add coloring method note if enabled
+                if coloring_method and colour_by_text:
+                    notes.append(f"Coloring: {coloring_method}")
+                
+                # Add auto-detected regions note if applicable
+                if auto_regions and len(auto_regions) > 0:
+                    regions_str = ", ".join([f"{start}-{end}" for start, end in auto_regions])
+                    notes.append(f"High density regions: {regions_str}")
+                
+                # Add all notes
+                for i, note in enumerate(notes):
+                    note_y_pos = current_note_y - (i * 0.04)  # Space between notes
+                    
+                    # Ensure note doesn't go below available space
+                    # note_y_pos = max(note_y_pos, 0.02)
+                    
+                    # Determine color for the note
+                    note_color = highlight_color if "High density regions" in note else text_color
+                    
+                    # Add the note text
+                    legend_ax.text(0.0, note_y_pos, f"Note: {note}", 
+                                transform=legend_ax.transAxes,
+                                fontsize=legend_fontsize-1, 
+                                fontstyle='italic',
+                                color=note_color,
+                                ha='left', va='top',
+                                wrap=True)
+        
+            # Set y-ticks and labels    
             ax.set_yticks([])
             ax.spines['top'].set_visible(False)
             ax.spines['right'].set_visible(False)
@@ -613,35 +773,20 @@ class ImmunoViz:
             plt.figtext(0.5, 0.94, protein_str, ha='center', color=text_color,
                         fontsize=9, fontstyle='italic')
             
-        # Add subtitle for coloring method
-        coloring_method = ""
-        if color_by_protein_and_intensity:
-            coloring_method = "Colored by protein and intensity"
-        elif color_by is None:
-            coloring_method = None
-        elif color_by == 'intensity':
-            coloring_method = "Colored by intensity"
-        elif color_by == 'protein':
-            coloring_method = "Colored by protein"
-        elif color_by == 'count':
-            coloring_method = "Colored by detection count"
-        elif color_by == 'length':
-            coloring_method = "Colored by peptide length"
-        
+        if use_sample_color_bars == False:
+            if coloring_method and colour_by_text:
+                y_pos = 0.92 if len(protein_ids) <= 1 else 0.90
+                plt.figtext(0.5, y_pos, coloring_method, ha='center', color=text_color,
+                            fontsize=9, fontstyle='italic')
 
-        if coloring_method:
-            y_pos = 0.92 if len(protein_ids) <= 1 else 0.90
-            plt.figtext(0.5, y_pos, coloring_method, ha='center', color=text_color,
-                        fontsize=9, fontstyle='italic')
-
-        # Add subtitle for auto-detected regions if applicable
-        if auto_regions and len(auto_regions) > 0:
-            regions_str = ", ".join(
-                [f"{start}-{end}" for start, end in auto_regions])
-            y_pos = 0.90 if len(
-                protein_ids) <= 1 and not coloring_method else 0.88
-            plt.figtext(0.5, y_pos, f"Auto-highlighted regions: {regions_str}",
-                        ha='center', fontsize=9, fontstyle='italic', color=highlight_color)
+            # Add subtitle for auto-detected regions if applicable
+            if auto_regions and len(auto_regions) > 0:
+                regions_str = ", ".join(
+                    [f"{start}-{end}" for start, end in auto_regions])
+                y_pos = 0.90 if len(
+                    protein_ids) <= 1 and not coloring_method else 0.88
+                plt.figtext(0.5, y_pos, f"High density regions: {regions_str}",
+                            ha='center', fontsize=9, fontstyle='italic', color=highlight_color)
 
         # Handle x-tick labels for all axes except the last one
         for i in range(len(axs)):
