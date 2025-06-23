@@ -189,8 +189,3 @@ examples/new_test_examples/*
 
 # Ignore new tools examples
 examples/new_tools/
-
-
-#ignore test output data
-output*
-*output
