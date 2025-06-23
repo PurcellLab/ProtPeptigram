@@ -12,7 +12,7 @@
 ProtPeptigram provides a comprehensive visualization platform for mapping immunopeptides to their source proteins across different biological samples. This tool can enables to identify peptide coverage patterns, analyze density distributions, and compare peptide presentations between experimental conditions.
 
 <p align="center">
-  <img src="https://github.com/Sanpme66/ProtPeptigram/blob/main/example/prot-peptigram_P63260.png" alt="ProtPeptigram Visualization Example" width="700"/>
+  <img src="https://github.com/Sanpme66/ProtPeptigram/blob/main/example/prot-peptigram_P60710.png" alt="ProtPeptigram Visualization Example" width="700"/>
 </p>
 
 ## Features
