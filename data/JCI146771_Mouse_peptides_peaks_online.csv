@@ -1,4 +1,4 @@
-﻿Peptide,-10lgP,Mass,Length,ppm,m/z,RT,Accession,PTM,AScore,Area Sample 16,Intensity_Hep_B10BR_28-14-8s,Intensity_Hep_B10BR_K9-178,Intensity_178-3 skin graft_28-14-8s,Intensity_178-3 skin graft_K9-178,Intensity_178-3 spleen_K9-178,Intensity_178-3 spleen_Y-3
+﻿Peptide,-10lgP,Mass,Length,ppm,m/z,RT,Accession,PTM,AScore,Area Sample 16,Intensity_Hep_B10BR_28-14-8s,intensity_Hep_B10BR_K9-178,Intensity_178-3 skin graft_28-14-8s,Intensity_178-3 skin graft_K9-178,Intensity_178-3 spleen_K9-178,Intensity_178-3 spleen_Y-3
 TPVITGAPYEYR,55.75,1365.6929,12,-0.6,683.8533,41.7,i#CONTAM#RT-pepF,,,9.94E+08,6.10E+08,6.70E+08,7.41E+08,7.53E+08,1.26E+09,7.62E+08
 YILAGVENSK,49.2,1092.5815,10,0.4,1093.5892,35.74,i#CONTAM#RT-pepD,,,5.77E+08,5.92E+08,5.10E+08,4.62E+08,5.66E+08,9.02E+08,7.54E+08
 GTFIIDPGGVIR,50.91,1243.6924,12,0.6,415.5717,57.95,i#CONTAM#RT-pepI,,,4.77E+08,3.35E+08,3.56E+08,4.68E+08,5.75E+08,8.92E+08,3.69E+08

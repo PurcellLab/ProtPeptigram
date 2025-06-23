@@ -23,6 +23,6 @@ from ProtPeptigram.viz import ImmunoViz
 #controll for __all__ to limit what is imported when using 'from module import *'
 # __all__ = ['PeptideDataProcessor', 'ImmunoViz']
 
-__version__ = "1.0.1-dev"
+__version__ = "1.1.0-dev"
 __author__ = "Sanjay Krishna,Prithvi Munday,Chen Li"
 __email__ = "sanjay.sondekoppagopalakrishna@monash.edu"
