@@ -176,7 +176,7 @@ class PeptideDataProcessor:
         
         return clean_peptide
     
-    def extract_protein_ids(self, accession_value: str) -> List[str]:
+    def extract_protein_ids(self, accession_value: str, protein_pattern=None ) -> List[str]:
         """
         Extract protein IDs from an accession value, which may contain multiple IDs.
         
@@ -191,14 +191,48 @@ class PeptideDataProcessor:
         """
         if pd.isna(accession_value) or accession_value == "":
             return []
-            
+        if protein_pattern is None:
+            # Default pattern to split by common delimiters
+            protein_pattern = r'[,:;|/\s]+'
+        else:
+            # Use the provided regex pattern if specified
+            protein_pattern = re.compile(protein_pattern)
         # Split by common delimiters
-        protein_ids = re.split(r'[,:;|/\s]+', accession_value)
+        protein_ids = re.split(protein_pattern, accession_value)
         
         # Remove empty entries and trim whitespace
         protein_ids = [pid.strip() for pid in protein_ids if pid.strip()]
-        
         return protein_ids
+    
+    def extract_protein_isoforms(self, accession_value: str, protein_pattern: str = r'[,:;|/\\s]+') -> List[str]:
+        """
+        Extract protein isoforms from an accession value, splitting by delimiters and extracting isoform info.
+
+        Parameters:
+        -----------
+        accession_value : str
+            Accession value from the PEAKS output
+        protein_pattern : str, optional
+            Regex pattern to split multiple protein IDs (default: r'[,:;|/\s]+')
+
+        Returns:
+        --------
+        List[str]: List of protein isoforms (e.g., 'P12345-2' or 'P12345.2' if present, else just 'P12345')
+        """
+        if pd.isna(accession_value) or accession_value == "":
+            return []
+        # Split by common delimiters
+        protein_ids = re.split(protein_pattern, accession_value)
+        isoforms = []
+        for pid in protein_ids:
+            pid = pid.strip()
+            if not pid:
+                continue
+            # Match patterns like "P12345-1" or "P12345.1"
+            isoform_match = re.match(r'^([A-Z0-9]+(?:[-\.]\d+)?)', pid)
+            if isoform_match:
+                isoforms.append(isoform_match.group(1))
+        return isoforms
     
     def find_peptide_position(self, peptide: str, protein_sequence: str) -> Tuple[int, int]:
         """
