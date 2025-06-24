@@ -133,7 +133,7 @@ def run_pipeline(
     specific_proteins = None
     if protein_list and os.path.exists(protein_list):
         specific_proteins = read_protein_list(protein_list)
-        console.print(f"Using {len(specific_proteins)} proteins from provided list.", style="bold")
+        console.log(f"Using {len(specific_proteins)} proteins from provided list.", style="bold")
     
     # 1. Initialize the data processor
     processor = PeptideDataProcessor()
@@ -180,6 +180,7 @@ def run_pipeline(
         try:
             fig, _ = viz.plot_peptigram(
                 [prot],
+                groups = unique_samples,
                 group_by='Sample',
                 color_by='protein',
                 figsize=(14, 12),

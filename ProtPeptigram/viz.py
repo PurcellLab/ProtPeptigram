@@ -191,14 +191,17 @@ class ImmunoViz:
 
         peptide_groups.columns = ['Peptide', 'Protein', 'Start',
                                   'End', 'Mean_Intensity', 'Std_Intensity', 'Count', 'Groups']
-
         # Determine groups to plot
         if groups is None:
             all_groups = []
             for g in peptide_groups['Groups']:
                 all_groups.extend(g)
             groups = sorted(list(set(all_groups)))
-
+            
+        # groups = sorted(list({g for group_list in peptide_groups['Groups'] for g in group_list}))
+        # print(f"Groups to plot: {groups}")
+        # print(f"Proteins to plot: {peptide_groups}")
+        
         # Configure styling for publication-quality
         plt.style.use('default')
         plt.rcParams['font.family'] = 'sans-serif'
@@ -480,119 +483,121 @@ class ImmunoViz:
                 lambda x: group in x)]
 
             if group_peptides.empty:
-                ax.set_visible(False)
-                continue
+               #making empty plot if no peptides in group
+               ax.set_xlim(xlim)
+               ax.set_ylim(-1, 0)  # Keep consistent with non-empty plots (negative y-axis)
+               max_height = 1
+            else:
+                # group_peptides['Length'] = group_peptides['End'] - group_peptides['Start']
+                group_peptides.loc[:, 'Length'] = group_peptides['End'] - \
+                    group_peptides['Start']
 
-            # group_peptides['Length'] = group_peptides['End'] - group_peptides['Start']
-            group_peptides.loc[:, 'Length'] = group_peptides['End'] - \
-                group_peptides['Start']
+                # Calculate maximum height needed
+                max_height = self._calculate_plot_height(group_peptides, xlim)
 
-            # Calculate maximum height needed
-            max_height = self._calculate_plot_height(group_peptides, xlim)
+                # Initialize space tracking array
+                spaces = np.zeros((max_height, int(xlim[1] - xlim[0] + 1)))
 
-            # Initialize space tracking array
-            spaces = np.zeros((max_height, int(xlim[1] - xlim[0] + 1)))
+                # Sort peptides by start position and length
+                group_peptides = group_peptides.sort_values(
+                    ['Start', 'End'], ascending=[True, False])
 
-            # Sort peptides by start position and length
-            group_peptides = group_peptides.sort_values(
-                ['Start', 'End'], ascending=[True, False])
+                # Plot each peptide
+                for idx, peptide in group_peptides.iterrows():
+                    start = int(peptide['Start'])
+                    end = int(peptide['End'])
+                    protein_id = peptide['Protein']
 
-            # Plot each peptide
-            for idx, peptide in group_peptides.iterrows():
-                start = int(peptide['Start'])
-                end = int(peptide['End'])
-                protein_id = peptide['Protein']
+                    # Get base color for this protein
+                    base_color = protein_to_color[protein_id]
+                    final_color = base_color
 
-                # Get base color for this protein
-                base_color = protein_to_color[protein_id]
-                final_color = base_color
+                    # Apply coloring based on selection
+                    if color_by_protein_and_intensity:
+                        # Get intensity value and normalize using per-protein normalization
+                        intensity_val = peptide['Mean_Intensity']
 
-                # Apply coloring based on selection
-                if color_by_protein_and_intensity:
-                    # Get intensity value and normalize using per-protein normalization
-                    intensity_val = peptide['Mean_Intensity']
+                        # Get normalization for this protein
+                        if protein_id in protein_intensity_norms:
+                            norm = protein_intensity_norms[protein_id]
+                            intensity_normalized = norm(intensity_val)
+                        else:
+                            # Fallback to global normalization
+                            intensity_normalized = plt.Normalize(
+                                min_intensity_val, max_intensity_val)(intensity_val)
 
-                    # Get normalization for this protein
-                    if protein_id in protein_intensity_norms:
-                        norm = protein_intensity_norms[protein_id]
-                        intensity_normalized = norm(intensity_val)
-                    else:
-                        # Fallback to global normalization
-                        intensity_normalized = plt.Normalize(
-                            min_intensity_val, max_intensity_val)(intensity_val)
+                        # Get the appropriate colormap for this protein
+                        intensity_cmap = intensity_cmap_dict[protein_id]
 
-                    # Get the appropriate colormap for this protein
-                    intensity_cmap = intensity_cmap_dict[protein_id]
+                        # Get color from the protein's intensity colormap
+                        if intensity_normalized < 0:
+                            intensity_normalized = 0
+                        elif intensity_normalized > 1:
+                            intensity_normalized = 1
 
-                    # Get color from the protein's intensity colormap
-                    if intensity_normalized < 0:
-                        intensity_normalized = 0
-                    elif intensity_normalized > 1:
-                        intensity_normalized = 1
+                        final_color = intensity_cmap(intensity_normalized)
 
-                    final_color = intensity_cmap(intensity_normalized)
+                    elif color_by == 'intensity':
+                        intensity_val = peptide['Mean_Intensity']
 
-                elif color_by == 'intensity':
-                    intensity_val = peptide['Mean_Intensity']
+                        # Use per-protein normalization and colormap
+                        if protein_id in protein_intensity_norms:
+                            norm = protein_intensity_norms[protein_id]
+                            intensity_normalized = norm(intensity_val)
+                        else:
+                            # Fallback to global normalization
+                            intensity_normalized = plt.Normalize(
+                                min_intensity_val, max_intensity_val)(intensity_val)
 
-                    # Use per-protein normalization and colormap
-                    if protein_id in protein_intensity_norms:
-                        norm = protein_intensity_norms[protein_id]
-                        intensity_normalized = norm(intensity_val)
-                    else:
-                        # Fallback to global normalization
-                        intensity_normalized = plt.Normalize(
-                            min_intensity_val, max_intensity_val)(intensity_val)
+                        # Use the protein's assigned colormap
+                        intensity_cmap = intensity_cmap_dict[protein_id]
+                        final_color = intensity_cmap(intensity_normalized)
 
-                    # Use the protein's assigned colormap
-                    intensity_cmap = intensity_cmap_dict[protein_id]
-                    final_color = intensity_cmap(intensity_normalized)
+                    elif color_by == 'count':
+                        count_val = peptide['Count']
+                        count_normalized = plt.Normalize(
+                            1, group_peptides['Count'].max())(count_val)
+                        final_color = plt.cm.Blues(count_normalized)
 
-                elif color_by == 'count':
-                    count_val = peptide['Count']
-                    count_normalized = plt.Normalize(
-                        1, group_peptides['Count'].max())(count_val)
-                    final_color = plt.cm.Blues(count_normalized)
+                    elif color_by == 'length':
+                        length_val = peptide['End'] - peptide['Start']
+                        length_normalized = plt.Normalize(
+                            group_peptides['Length'].min(), group_peptides['Length'].max())(length_val)
+                        final_color = plt.cm.Greens(length_normalized)
 
-                elif color_by == 'length':
-                    length_val = peptide['End'] - peptide['Start']
-                    length_normalized = plt.Normalize(
-                        group_peptides['Length'].min(), group_peptides['Length'].max())(length_val)
-                    final_color = plt.cm.Greens(length_normalized)
+                    # Find available space for this peptide
+                    for height in range(max_height):
+                        if start < xlim[0]:
+                            start = xlim[0]
+                        if end > xlim[1]:
+                            end = xlim[1]
 
-                # Find available space for this peptide
-                for height in range(max_height):
-                    if start < xlim[0]:
-                        start = xlim[0]
-                    if end > xlim[1]:
-                        end = xlim[1]
+                        space_start = max(0, start - xlim[0])
+                        space_end = min(end - xlim[0], xlim[1] - xlim[0])
 
-                    space_start = max(0, start - xlim[0])
-                    space_end = min(end - xlim[0], xlim[1] - xlim[0])
+                        if space_start >= spaces.shape[1] or space_end >= spaces.shape[1]:
+                            continue
 
-                    if space_start >= spaces.shape[1] or space_end >= spaces.shape[1]:
-                        continue
-
-                    space_needed = spaces[height, space_start:space_end+1]
-                    if np.sum(space_needed) == 0:  # Space is available
-                        spaces[height, space_start:space_end+1] = 1
-                        #peptide visualization
-                        ax.plot(
-                            [start, end],
-                            [-height-0.4, -height-0.4],
-                            linewidth=2.5,
-                            solid_capstyle='round',
-                            color=final_color,
-                            alpha=0.95,
-                            path_effects=[
-                                path_effects.withStroke(
-                                    linewidth=3.0,
-                                    foreground=(0, 0, 0, 0.2),
-                                    alpha=0.3
-                                )
-                            ]
-                        )
-                        break
+                        space_needed = spaces[height, space_start:space_end+1]
+                        if np.sum(space_needed) == 0:  # Space is available
+                            spaces[height, space_start:space_end+1] = 1
+                            #peptide visualization
+                            ax.plot(
+                                [start, end],
+                                [-height-0.4, -height-0.4],
+                                linewidth=2.5,
+                                solid_capstyle='round',
+                                color=final_color,
+                                alpha=0.95,
+                                path_effects=[
+                                    path_effects.withStroke(
+                                        linewidth=3.0,
+                                        foreground=(0, 0, 0, 0.2),
+                                        alpha=0.3
+                                    )
+                                ]
+                            )
+                            break
 
             # Set plot limits and labels
             ax.set_ylim(-max_height, 0)

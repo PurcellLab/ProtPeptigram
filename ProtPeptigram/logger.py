@@ -55,7 +55,7 @@ def configure_logging(level: str = "info", log_to_file: bool = False) -> logging
     logger.setLevel(log_level)
     return logger
 
-
+#add console logging
 def save_console_log(output_dir,file_name: str = "prot-peptigram.log"):
     """
     Saves console logs to a specified file.
