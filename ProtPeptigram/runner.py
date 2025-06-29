@@ -131,9 +131,26 @@ def run_pipeline(
     
     # Read specific protein list if provided
     specific_proteins = None
-    if protein_list and os.path.exists(protein_list):
-        specific_proteins = read_protein_list(protein_list)
-        console.log(f"Using {len(specific_proteins)} proteins from provided list.", style="bold")
+    # console.log(f"Checking for specific protein list...{protein_list}", style="bold")
+    if protein_list:
+        console.log(f"Protein list provided: {protein_list}", style="bold yellow")
+        try:
+            if isinstance(protein_list, str):
+                console.log(f"Checking if protein_list is a file or string: {protein_list}", style="bold yellow")
+                specific_proteins = [protein_list]  # If it's a single string, treat it as a list with one protein
+            # If protein_list is a string, assume it's a comma-separated list
+            elif isinstance(protein_list, str) and ',' in protein_list:
+                console.log("Parsing comma-separated protein list...", style="bold green")
+                specific_proteins = str(protein_list).split(",")
+            
+            elif protein_list and os.path.exists(protein_list):
+                console.log(f"Reading specific protein list from {protein_list}", style="bold green")
+                specific_proteins = read_protein_list(protein_list)
+            else:
+                specific_proteins = read_protein_list(protein_list)
+        except FileNotFoundError:
+            console.log(f"Error reading protein list file: {protein_list}", style="bold red")
+            # raise
     
     # 1. Initialize the data processor
     processor = PeptideDataProcessor()
@@ -184,7 +201,7 @@ def run_pipeline(
                 group_by='Sample',
                 color_by='protein',
                 figsize=(14, 12),
-                title=f"Peptide-Protein alignment visualisation - {prot}",
+                title=f"Prot-Petigram :Peptide-Protein alignment visualisation for {prot}",
                 color_by_protein_and_intensity=False,
                 intensity_cmaps=["Blues", "Reds", "Greens", "Purples"],
                 protein_cmap="Set1", 

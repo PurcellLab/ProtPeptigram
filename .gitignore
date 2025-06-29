@@ -189,3 +189,7 @@ examples/new_test_examples/*
 
 # Ignore new tools examples
 examples/new_tools/
+
+#apple system files
+.DS_Store
+
