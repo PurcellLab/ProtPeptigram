@@ -6,6 +6,8 @@ import os
 from io import StringIO
 from typing import List, Dict, Union, Optional, Tuple, Set
 from Bio import SeqIO
+from ProtPeptigram.viz import ImmunoViz
+from rich.progress import Progress
 
 class PeptideDataProcessor:
     """
@@ -204,7 +206,7 @@ class PeptideDataProcessor:
         protein_ids = [pid.strip() for pid in protein_ids if pid.strip()]
         return protein_ids
     
-    def extract_protein_isoforms(self, accession_value: str, protein_pattern: str = r'[,:;|/\\s]+') -> List[str]:
+    def extract_protein_isoforms(self, accession_value: str, protein_pattern: str = r'[,:;|/\s]+') -> List[str]:
         """
         Extract protein isoforms from an accession value, splitting by delimiters and extracting isoform info.
 
@@ -317,50 +319,40 @@ class PeptideDataProcessor:
         
         # Extract sample names from intensity columns
         sample_names = [re.sub(r'^[_\-\*]+', '', col.replace(self.sample_prefix, '')) for col in self.intensity_cols]
-        
-        # Process each peptide
-        for _, row in data.iterrows():
-            peptide = row['Peptide']
-            # Get clean peptide for length calculation
-            clean_peptide = self.remove_ptm(peptide)
-            
-            # Get all protein IDs for this peptide
-            protein_ids = self.extract_protein_ids(row['Accession'])
-            
-            if not protein_ids:
-                continue
-                
-            # Process each protein ID
-            for protein_id in protein_ids:
-                # Find the protein sequence
-                protein_sequence = self.get_protein_sequence(protein_id)
-                
-                if protein_sequence is None:
-                    # Could not find the sequence, use placeholder positions
-                    start, end = 1, len(clean_peptide)
-                else:
-                    # Find the peptide position in the protein
-                    start, end = self.find_peptide_position(peptide, protein_sequence)
-                    
-                    if start == -1:
-                        # Peptide not found in the sequence, use placeholder positions
+        with Progress() as progress:
+            task = progress.add_task("[cyan]Aligning peptides to protein sequences...", total=len(data))
+            # Process each peptide
+            for idx, row in enumerate(data.iterrows()):
+                # The original for-loop body
+                _, row = row
+                peptide = row['Peptide']
+                clean_peptide = self.remove_ptm(peptide)
+                protein_ids = self.extract_protein_ids(row['Accession'])
+                if not protein_ids:
+                    progress.update(task, advance=1)
+                    continue
+                for protein_id in protein_ids:
+                    protein_sequence = self.get_protein_sequence(protein_id)
+                    if protein_sequence is None:
                         start, end = 1, len(clean_peptide)
-                
-                # Add an entry for each sample where the peptide was detected
-                for i, col in enumerate(self.intensity_cols):
-                    intensity = row[col]
-                    if intensity > intensity_threshold:
-                        formatted_rows.append({
-                            'Peptide': peptide,
-                            'CleanPeptide': clean_peptide,  # Store the clean peptide too
-                            'Protein': protein_id,
-                            'Start': start,
-                            'End': end,
-                            'Intensity': intensity,
-                            'Sample': sample_names[i],
-                            'Length': len(clean_peptide)  # Use clean peptide length
-                        })
-        
+                    else:
+                        start, end = self.find_peptide_position(peptide, protein_sequence)
+                        if start == -1:
+                            start, end = 1, len(clean_peptide)
+                    for i, col in enumerate(self.intensity_cols):
+                        intensity = row[col]
+                        if intensity > intensity_threshold:
+                            formatted_rows.append({
+                                'Peptide': peptide,
+                                'CleanPeptide': clean_peptide,
+                                'Protein': protein_id,
+                                'Start': start,
+                                'End': end,
+                                'Intensity': intensity,
+                                'Sample': sample_names[i],
+                                'Length': len(clean_peptide)
+                            })
+                progress.update(task, advance=1)
         # Create the formatted DataFrame
         self.peptide_df = pd.DataFrame(formatted_rows)
         
@@ -393,7 +385,7 @@ class PeptideDataProcessor:
                 
         return None
     
-    def create_immunoviz_object(self) -> 'ImmunoViz':
+    def create_immunoviz_object(self) -> ImmunoViz:
         """
         Create an ImmunoViz object from the processed data.
         
@@ -406,8 +398,7 @@ class PeptideDataProcessor:
             
         # Import ImmunoViz here to avoid circular imports
         try:
-            # Assuming ImmunoViz is defined elsewhere or imported
-            from ProtPeptigram.viz import ImmunoViz
+            # from ProtPeptigram.viz import ImmunoViz
             # Use a dataframe with just the columns ImmunoViz expects
             immunoviz_df = self.peptide_df[['Peptide', 'Protein', 'Start', 'End', 'Intensity', 'Sample', 'Length']].copy()
             return ImmunoViz(immunoviz_df)
