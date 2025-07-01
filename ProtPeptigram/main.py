@@ -127,7 +127,9 @@ def main():
         "-pl",
         "--protein_list",
         type=str,
-        help="path to a text file containing a list of protein IDs to filter"
+        nargs='+',
+        default=None,
+        help="List of protein IDs to filter (provide as space-separated values)"
     )
     
     parser.add_argument(

@@ -5,7 +5,7 @@ import os
 import matplotlib.pyplot as plt
 from pathlib import Path
 from typing import List, Optional, Union
-
+import sys
 
 def select_abundant_proteins(processor, top_n=5, min_peptides=3):
     """
@@ -80,7 +80,7 @@ def run_pipeline(
     fasta_path: str,
     output_dir: Optional[str] = None,
     top: Optional[Union[int, str]] = 5,
-    protein_list: Optional[str] = None,
+    protein_list: Optional[List] = None,
     regex_pattern: Optional[str] = None,
     intensity_threshold: float = 0.0,
     min_samples: int = 1,
@@ -131,27 +131,17 @@ def run_pipeline(
     
     # Read specific protein list if provided
     specific_proteins = None
-    # console.log(f"Checking for specific protein list...{protein_list}", style="bold")
     if protein_list:
-        console.log(f"Protein list provided: {protein_list}", style="bold yellow")
-        try:
-            if isinstance(protein_list, str):
-                console.log(f"Checking if protein_list is a file or string: {protein_list}", style="bold yellow")
-                specific_proteins = [protein_list]  # If it's a single string, treat it as a list with one protein
-            # If protein_list is a string, assume it's a comma-separated list
-            elif isinstance(protein_list, str) and ',' in protein_list:
-                console.log("Parsing comma-separated protein list...", style="bold green")
-                specific_proteins = str(protein_list).split(",")
-            
-            elif protein_list and os.path.exists(protein_list):
-                console.log(f"Reading specific protein list from {protein_list}", style="bold green")
-                specific_proteins = read_protein_list(protein_list)
-            else:
-                specific_proteins = read_protein_list(protein_list)
-        except FileNotFoundError:
-            console.log(f"Error reading protein list file: {protein_list}", style="bold red")
-            # raise
-    
+        # If called from CLI: comma-separated string of protein IDs
+        if isinstance(protein_list, str):
+            specific_proteins = [p.strip() for p in protein_list.split(",") if p.strip()]
+            console.log(f"Using {len(specific_proteins)} proteins from comma-separated list.", style="bold")
+        # If called from API: must be a Python list of protein IDs
+        elif isinstance(protein_list, list):
+            specific_proteins = [str(p).strip() for p in protein_list if str(p).strip()]
+            console.log(f"Using {len(specific_proteins)} proteins from provided list.", style="bold")
+        else:
+            raise ValueError("protein_list must be a list of protein IDs or a comma-separated string.")
     # 1. Initialize the data processor
     processor = PeptideDataProcessor()
     
@@ -185,23 +175,24 @@ def run_pipeline(
         proteins_to_visualize = [p for p in specific_proteins if p in unique_proteins]
         if len(proteins_to_visualize) == 0:
             console.print("Warning: None of the specified proteins were found in the data.")
-            # Fall back to top proteins if specified proteins not found
-            proteins_to_visualize = select_abundant_proteins(processor, top_n=top, min_peptides=3)
+            # # Fall back to top proteins if specified proteins not found
+            # proteins_to_visualize = select_abundant_proteins(processor, top_n=top, min_peptides=1)
+            sys.exit(1)
     else:
         # Use top proteins by peptide count
-        proteins_to_visualize = select_abundant_proteins(processor, top_n=top, min_peptides=3)
+        proteins_to_visualize = select_abundant_proteins(processor, top_n=top, min_peptides=1)
     
     # 8. Create visualizations for each protein
     output_files = []
     for prot in proteins_to_visualize:
         try:
+            console.log(f"Generating PeptiGram for protein: {prot}", style="bold")
             fig, _ = viz.plot_peptigram(
                 [prot],
-                groups = unique_samples,
                 group_by='Sample',
                 color_by='protein',
                 figsize=(14, 12),
-                title=f"Prot-Petigram :Peptide-Protein alignment visualisation for {prot}",
+                title=f"Peptide-Protein alignment visualisation - {prot}",
                 color_by_protein_and_intensity=False,
                 intensity_cmaps=["Blues", "Reds", "Greens", "Purples"],
                 protein_cmap="Set1", 
