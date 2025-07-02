@@ -197,5 +197,5 @@ examples/new_tools/
 test_output/processed_peptides_prot-peptigram.csv
 test_output/prot-peptigram_*.png
 # Ignore new example notebooks
-example/*
 test_outputAPI/*
+*.ipynb
