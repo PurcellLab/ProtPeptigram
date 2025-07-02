@@ -129,7 +129,6 @@ def run_pipeline(
         output_dir = os.path.dirname(csv_path)
     os.makedirs(output_dir, exist_ok=True)
     
-    # Read specific protein list if provided
     specific_proteins = None
     if protein_list:
         # If called from CLI: comma-separated string of protein IDs
