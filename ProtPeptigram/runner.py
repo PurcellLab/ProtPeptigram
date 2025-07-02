@@ -176,7 +176,7 @@ def run_pipeline(
             console.print("Warning: None of the specified proteins were found in the data.")
             # # Fall back to top proteins if specified proteins not found
             # proteins_to_visualize = select_abundant_proteins(processor, top_n=top, min_peptides=1)
-            sys.exit(1)
+            sys.exit(0)
     else:
         # Use top proteins by peptide count
         proteins_to_visualize = select_abundant_proteins(processor, top_n=top, min_peptides=1)
