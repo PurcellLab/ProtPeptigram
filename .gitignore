@@ -196,3 +196,6 @@ examples/new_tools/
 # Ignore test output files in ../test_output/
 test_output/processed_peptides_prot-peptigram.csv
 test_output/prot-peptigram_*.png
+# Ignore new example notebooks
+example/*
+test_outputAPI/*
