@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.patheffects as path_effects
 from typing import List, Dict, Union, Tuple, Optional
+from ProtPeptigram.logger import CONSOLE as console
 import os
 
 
@@ -197,7 +198,8 @@ class ImmunoViz:
             for g in peptide_groups['Groups']:
                 all_groups.extend(g)
             groups = sorted(list(set(all_groups)))
-            
+        console.log(f"Groups to plot: {groups}", style="bold green")
+        
         # groups = sorted(list({g for group_list in peptide_groups['Groups'] for g in group_list}))
         # print(f"Groups to plot: {groups}")
         # print(f"Proteins to plot: {peptide_groups}")

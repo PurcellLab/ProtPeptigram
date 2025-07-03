@@ -169,14 +169,14 @@ def run_pipeline(
     viz = ImmunoViz(immunoviz_df)
     
     # 7. Determine proteins to visualize
-    if specific_proteins:
+    if specific_proteins is not None:
         # Filter to ensure proteins exist in the data
         proteins_to_visualize = [p for p in specific_proteins if p in unique_proteins]
         if len(proteins_to_visualize) == 0:
-            console.print("Warning: None of the specified proteins were found in the data.")
+            console.log("[WARNINGS][Proteins]: None of the specified proteins were found in the data.", style="bold yellow")
             # # Fall back to top proteins if specified proteins not found
             # proteins_to_visualize = select_abundant_proteins(processor, top_n=top, min_peptides=1)
-            sys.exit(0)
+            # sys.exit(0)
     else:
         # Use top proteins by peptide count
         proteins_to_visualize = select_abundant_proteins(processor, top_n=top, min_peptides=1)
@@ -188,6 +188,7 @@ def run_pipeline(
             console.log(f"Generating PeptiGram for protein: {prot}", style="bold")
             fig, _ = viz.plot_peptigram(
                 [prot],
+                groups= unique_samples,
                 group_by='Sample',
                 color_by='protein',
                 figsize=(14, 12),
